@@ -24,19 +24,25 @@ public:
 
     ~MainWindow() override;
 
+
 private:
     Ui::MainWindow *ui;
+    int windowWidth;
+    int windowHeight;
+    QVBoxLayout *layout;
     QMovie *movie;
     QLabel *label;
     void playVideo(const QString &filePath);
     void stopVideo();
+    void clearLayout(QLayout *layout);
+
 signals:
     void videoStopped();
-
 
 public slots:
 
     void onVideoStopped();
+
 
 };
 
