@@ -1,0 +1,4 @@
+E:/shapez/cmake-build-debug/CMakeFiles/shapez.dir
+E:/shapez/cmake-build-debug/CMakeFiles/edit_cache.dir
+E:/shapez/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+E:/shapez/cmake-build-debug/CMakeFiles/shapez_autogen.dir
