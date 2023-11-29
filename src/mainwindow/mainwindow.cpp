@@ -119,7 +119,7 @@ void MainWindow::stopVideo()
         delete movie;
         movie = nullptr;
         delete label;
-
+        label = nullptr;
         // 发出停止信号
         emit videoStopped();
     }
@@ -146,7 +146,7 @@ void MainWindow::onVideoStopped()
     // 创建视图
     QGraphicsView *view = new QGraphicsView(scene, this);
     view->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2); // 视图显示场景的全部
-    view->setGeometry(0, 0, windowWidth - 50, windowHeight - 50); // 固定视图大小
+    view->setGeometry(0, 0, windowWidth, windowHeight); // 固定视图大小
     view->show();
 
 
@@ -158,7 +158,6 @@ void MainWindow::onVideoStopped()
     {
         for (int j = 0; j < gridSize * 2; j++)
         {
-
             // 绘制基本方格
             QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));//新建方格
             pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放为100x100
