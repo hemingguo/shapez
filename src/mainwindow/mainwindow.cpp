@@ -20,6 +20,8 @@
 #include <QLabel>
 #include <QTimer>
 #include <QMenuBar>
+#include <QFontDatabase>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -28,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QWidget(parent), ui(new Ui::MainWindow), movie(nullptr), label(nullptr), layout(nullptr)
 {
 
-    //主窗口基本设置---/
+    //主窗口基本设置---------------------/
 
     ui->setupUi(this);
 
@@ -47,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //QString currentPath = QCoreApplication::applicationDirPath();
     //qDebug() << "当前工作目录：" << currentPath;
 
-    //---主窗口基本设置/
+    //---------------------------主窗口基本设置/
 
     playVideo("../media/loading.gif"); //播放：[开始加载gif动画--2秒后销毁]
 
@@ -139,33 +141,53 @@ void MainWindow::onVideoStopped()
     }
 
 
-    // 创建场景
-    QGraphicsScene *scene = new QGraphicsScene(this);
-    scene->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2);// 设置场景的大小为窗口的大小4倍
+    //开始游戏按钮-------------------/
 
-    // 创建视图
-    QGraphicsView *view = new QGraphicsView(scene, this);
-    view->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2); // 视图显示场景的全部
-    view->setGeometry(0, 0, windowWidth, windowHeight); // 固定视图大小
-    view->show();
+    pushButton = new QPushButton(this);
+    pushButton->setObjectName(QStringLiteral("pushButton"));
+    pushButton->setText("开始游戏");// 设置按钮的文本
+    pushButton->setGeometry(400, 500, 700, 200);// 设置按钮的大小和位置
+    //自定义字体
+    QString fontPath = "../media/方正宋刻本秀楷简.TTF";  // 替换为您的字体文件路径
+    int fontId = QFontDatabase::addApplicationFont(fontPath);
+    QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
+    QFont customFont(fontFamilies.first(), 35);  // 替换字体名称和字号
+    pushButton->setFont(customFont);
 
 
-    //初始化地图---/
-    const int gridSize = 15;
-    const int cellSize = windowWidth / gridSize;
+// 设置样式
+    pushButton->setStyleSheet("QPushButton {"
+                              "border-radius: 50px;"  // 设置圆角半径
+                              "background-color:  #32CD32;"  // 设置按钮背景颜色
+                              "color: white;"  // 设置文字颜色
+                              "}"
+                              "QPushButton:hover {"
+                              "background-color: #45a049;"  // 鼠标悬停时的背景颜色
+                              "}");
+    pushButton->show();// 显示按钮
 
-    for (int i = 0; i < gridSize * 2; i++)
-    {
-        for (int j = 0; j < gridSize * 2; j++)
-        {
-            // 绘制基本方格
-            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));//新建方格
-            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放为100x100
-            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
-            scene->addItem(pixmapItem);// 添加方格到场景
-        }
-    }
+    //----------------------开始游戏按钮/
 
-    //---初始化地图/
 
+    //放置logo图片---------------------/
+
+    QLabel *imageLabel = new QLabel(this);
+    imageLabel->setGeometry(400, 100, 700, 300);
+    QPixmap originalImage("../media/big_logo.png");  // 替换为你的图片路径
+    QPixmap scaledImage = originalImage.scaled(700, 300, Qt::KeepAspectRatio);
+    imageLabel->setPixmap(scaledImage);
+    imageLabel->show();
+
+    //----------------------放置logo图片/
+
+
+    //文字说明---------------------/
+    QLabel *descriptionLabel = new QLabel(this);
+    descriptionLabel->setText("欢迎来到异形工厂，尽情发挥你的聪明才智吧！");
+    descriptionLabel->setGeometry(400, 1000, 700, 50);
+    descriptionLabel->setFont(QFont("Arial", 16));
+    descriptionLabel->setStyleSheet("color: rgb(0, 216, 230);");
+    descriptionLabel->setAlignment(Qt::AlignCenter);
+    descriptionLabel->show();
+    //---------------------文字说明/
 }

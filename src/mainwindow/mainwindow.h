@@ -5,6 +5,7 @@
 #ifndef SHAPEZ_MAINWINDOW_H
 #define SHAPEZ_MAINWINDOW_H
 
+#include <QPushButton>
 #include <QLabel>
 #include <QWidget>
 #include <QtMultimediaWidgets/QVideoWidget>
@@ -32,11 +33,16 @@ private:
     QVBoxLayout *layout;
     QMovie *movie;
     QLabel *label;
+    QPushButton *pushButton;
+
     void playVideo(const QString &filePath);
+
     void stopVideo();
+
     void clearLayout(QLayout *layout);
 
 signals:
+
     void videoStopped();
 
 public slots:
