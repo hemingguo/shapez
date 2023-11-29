@@ -26,7 +26,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1400, 1400);
+        MainWindow->resize(1500, 1500);
 
         retranslateUi(MainWindow);
 

@@ -5,7 +5,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Description of the document:(文件作用说明)                                            *
  * this file named "mainwindow" is used to initialize the origin window for the game.  *
- * its basic logic is that it will first play the start_video, then it will            *
+ * its basic logic is that it will first play the loading video, then it will          *
  * present the initial screen window of the game, which include a big shapez [logo],   *
  * a [button] to start the game with a brief explanatory [text] below it,              *
  * and the [glassed-in background].                                                    *
@@ -19,6 +19,7 @@
 #include <QMovie>
 #include <QLabel>
 #include <QTimer>
+#include <QMenuBar>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -26,22 +27,32 @@
 MainWindow::MainWindow(QWidget *parent) :
         QWidget(parent), ui(new Ui::MainWindow), movie(nullptr), label(nullptr), layout(nullptr)
 {
+
+    //主窗口基本设置---/
+
     ui->setupUi(this);
+
+    setWindowTitle("Shapez");//重命名窗口标题
+
+    setWindowIcon(QIcon("../media/logo.png"));//设置窗口图标
 
     // 获取窗口的大小
     windowWidth = this->width();
     windowHeight = this->height();
-    // 固定窗口大小
-    setFixedSize(windowWidth, windowHeight);
+
+
+    setFixedSize(windowWidth, windowHeight);// 固定窗口大小
 
     // 获取当前应用程序的路径(控制台调试用)
     //QString currentPath = QCoreApplication::applicationDirPath();
     //qDebug() << "当前工作目录：" << currentPath;
 
-    //播放：[开始加载gif动画--3秒后销毁]
-    playVideo( "../media/loading.gif");  //相对路径
-    // 连接停止信号到槽函数
-    connect(this, &MainWindow::videoStopped, this, &MainWindow::onVideoStopped);
+    //---主窗口基本设置/
+
+    playVideo("../media/loading.gif"); //播放：[开始加载gif动画--2秒后销毁]
+
+    // 连接[停止信号]到[槽函数]
+    connect(this, &MainWindow::videoStopped, this, &MainWindow::onVideoStopped);//呈现开始游戏画面
 
 }
 
@@ -58,9 +69,11 @@ void MainWindow::clearLayout(QLayout *layout)
         return;
 
     QLayoutItem *item;
-    while ((item = layout->takeAt(0)) != nullptr) {
+    while ((item = layout->takeAt(0)) != nullptr)
+    {
         QWidget *widget = item->widget();
-        if (widget) {
+        if (widget)
+        {
             widget->hide();  // 隐藏部件，避免窗口闪烁
             delete widget;   // 删除布局中的部件
         }
@@ -74,18 +87,13 @@ void MainWindow::clearLayout(QLayout *layout)
 // 播放开始加载动画
 void MainWindow::playVideo(const QString &filePath)
 {
-    // 创建QLabel用于显示GIF
-    label = new QLabel(this);
 
-    // 创建QMovie并设置到QLabel
-    movie = new QMovie(filePath);
+    label = new QLabel(this);// 创建QLabel用于显示GIF
+    movie = new QMovie(filePath);// 创建QMovie并设置到QLabel
+
     label->setMovie(movie);
-
-    // 设置QLabel的大小策略，保持原本大小
-    label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // 播放GIF
-    movie->start();
+    label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);// 设置QLabel的大小策略，保持原本大小
+    movie->start();// 播放GIF
 
     // 设置布局管理器
     layout = new QVBoxLayout(this);
@@ -94,7 +102,8 @@ void MainWindow::playVideo(const QString &filePath)
     setLayout(layout);
 
     // 设置定时器，2秒后停止播放GIF
-    QTimer::singleShot(2000, this, [this]() {
+    QTimer::singleShot(2000, this, [this]()
+    {
         stopVideo();
     });
 
@@ -104,7 +113,8 @@ void MainWindow::playVideo(const QString &filePath)
 // 停止播放GIF，并销毁QMovie对象
 void MainWindow::stopVideo()
 {
-    if (movie) {
+    if (movie)
+    {
         movie->stop();
         delete movie;
         movie = nullptr;
@@ -123,42 +133,40 @@ void MainWindow::onVideoStopped()
     disconnect(this, &MainWindow::videoStopped, this, &MainWindow::onVideoStopped);
 
     //初始化布局管理器
-    if (layout) {
+    if (layout)
+    {
         clearLayout(layout);
     }
-    layout = new QVBoxLayout(this);
+
 
     // 创建场景
     QGraphicsScene *scene = new QGraphicsScene(this);
-
-    // 设置场景的大小为窗口的大小4倍
-    scene->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2);
+    scene->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2);// 设置场景的大小为窗口的大小4倍
 
     // 创建视图
     QGraphicsView *view = new QGraphicsView(scene, this);
-
-    view->setSceneRect(0, 0, windowWidth * 2 , windowHeight * 2); // 视图显示场景的全部
-    view->setGeometry(0, 0, windowWidth , windowHeight );
+    view->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2); // 视图显示场景的全部
+    view->setGeometry(0, 0, windowWidth - 50, windowHeight - 50); // 固定视图大小
     view->show();
 
-    // 初始化地图
-    const int gridSize = 14;
+
+    //初始化地图---/
+    const int gridSize = 15;
     const int cellSize = windowWidth / gridSize;
 
-    for (int i = 0; i < gridSize * 2; ++i)
+    for (int i = 0; i < gridSize * 2; i++)
     {
-        for (int j = 0; j < gridSize * 2; ++j)
+        for (int j = 0; j < gridSize * 2; j++)
         {
-            // 创建基本方格项
-            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));
-            pixmapItem->setPos(i * cellSize, j * cellSize);
 
-            // 添加方格项到场景
-            scene->addItem(pixmapItem);
+            // 绘制基本方格
+            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));//新建方格
+            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放为100x100
+            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+            scene->addItem(pixmapItem);// 添加方格到场景
         }
     }
 
-    // 设置布局管理器
-    layout->addWidget(view);
-    setLayout(layout);
+    //---初始化地图/
+
 }
