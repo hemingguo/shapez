@@ -24,6 +24,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "../first/first.h"
 
 //主窗口构造函数
 MainWindow::MainWindow(QWidget *parent) :
@@ -147,6 +148,10 @@ void MainWindow::onVideoStopped()
     pushButton->setObjectName(QStringLiteral("pushButton"));
     pushButton->setText("开始游戏");// 设置按钮的文本
     pushButton->setGeometry(400, 500, 700, 200);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(pushButton, &QPushButton::clicked, this, &MainWindow::onPushButtonClicked);
+
     //自定义字体
     QString fontPath = "../media/方正宋刻本秀楷简.TTF";  // 替换为您的字体文件路径
     int fontId = QFontDatabase::addApplicationFont(fontPath);
@@ -190,4 +195,15 @@ void MainWindow::onVideoStopped()
     descriptionLabel->setAlignment(Qt::AlignCenter);
     descriptionLabel->show();
     //---------------------文字说明/
+}
+
+// 开始游戏按钮点击事件槽函数
+void MainWindow::onPushButtonClicked()
+{
+    // 创建新窗口对象
+    first *firstWindow = new first();
+    // 显示新窗口
+    firstWindow->show();
+    // 关闭当前窗口
+    close();
 }

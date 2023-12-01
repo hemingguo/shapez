@@ -41,6 +41,8 @@ private:
 
     void clearLayout(QLayout *layout);
 
+    void onPushButtonClicked();
+
 signals:
 
     void videoStopped();

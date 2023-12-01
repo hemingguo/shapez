@@ -84,6 +84,7 @@
 	"DEP_FILE_RULE_NAME" : "",
 	"HEADERS" : 
 	[
+		[ "E:/shapez/src/first/first.h", "MU", "AM6ZQFK2QQ/moc_first.cpp", null ],
 		[
 			"E:/shapez/src/mainwindow/mainwindow.h",
 			"MU",
@@ -152,6 +153,7 @@
 	"SETTINGS_FILE" : "E:/shapez/cmake-build-debug/CMakeFiles/shapez_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
+		[ "E:/shapez/src/first/first.cpp", "MU", null ],
 		[ "E:/shapez/src/main.cpp", "MU", null ],
 		[ "E:/shapez/src/mainwindow/mainwindow.cpp", "MU", null ]
 	],

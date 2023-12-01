@@ -21,6 +21,9 @@ add_executable(shapez src/main.cpp
         src/mainwindow/mainwindow.cpp
         src/mainwindow/mainwindow.h
         src/mainwindow/mainwindow.ui
+        src/first/first.cpp
+        src/first/first.h
+        src/first/first.ui
 )
 
 

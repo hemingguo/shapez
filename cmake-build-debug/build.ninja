@@ -73,6 +73,14 @@ build CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj: CXX_COMPILER__sha
   OBJECT_DIR = CMakeFiles\shapez.dir
   OBJECT_FILE_DIR = CMakeFiles\shapez.dir\src\mainwindow
 
+build CMakeFiles/shapez.dir/src/first/first.cpp.obj: CXX_COMPILER__shapez_unscanned_Debug E$:/shapez/src/first/first.cpp || cmake_object_order_depends_target_shapez
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles\shapez.dir\src\first\first.cpp.obj.d
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
+  INCLUDES = -IE:/shapez/cmake-build-debug/shapez_autogen/include -isystem E:/QT/5.9.1/mingw53_32/include -isystem E:/QT/5.9.1/mingw53_32/include/QtCore -isystem E:/QT/5.9.1/mingw53_32/./mkspecs/win32-g++ -isystem E:/QT/5.9.1/mingw53_32/include/QtGui -isystem E:/QT/5.9.1/mingw53_32/include/QtANGLE -isystem E:/QT/5.9.1/mingw53_32/include/QtWidgets -isystem E:/QT/5.9.1/mingw53_32/include/QtMultimedia -isystem E:/QT/5.9.1/mingw53_32/include/QtNetwork -isystem E:/QT/5.9.1/mingw53_32/include/QtMultimediaWidgets
+  OBJECT_DIR = CMakeFiles\shapez.dir
+  OBJECT_FILE_DIR = CMakeFiles\shapez.dir\src\first
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target shapez
@@ -81,7 +89,7 @@ build CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj: CXX_COMPILER__sha
 #############################################
 # Link the executable shapez.exe
 
-build shapez.exe: CXX_EXECUTABLE_LINKER__shapez_Debug CMakeFiles/shapez.dir/shapez_autogen/mocs_compilation.cpp.obj CMakeFiles/shapez.dir/src/main.cpp.obj CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj | E$:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a || shapez_autogen
+build shapez.exe: CXX_EXECUTABLE_LINKER__shapez_Debug CMakeFiles/shapez.dir/shapez_autogen/mocs_compilation.cpp.obj CMakeFiles/shapez.dir/src/main.cpp.obj CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj CMakeFiles/shapez.dir/src/first/first.cpp.obj | E$:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a || shapez_autogen
   FLAGS = -g
   LINK_LIBRARIES = E:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\shapez.dir
@@ -118,13 +126,13 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Utility command for shapez_autogen
 
-build shapez_autogen: phony CMakeFiles/shapez_autogen shapez_autogen/mocs_compilation.cpp shapez_autogen/include/src/mainwindow/ui_mainwindow.h
+build shapez_autogen: phony CMakeFiles/shapez_autogen shapez_autogen/mocs_compilation.cpp shapez_autogen/include/src/mainwindow/ui_mainwindow.h shapez_autogen/include/src/first/ui_first.h
 
 
 #############################################
 # Custom command for CMakeFiles\shapez_autogen
 
-build CMakeFiles/shapez_autogen shapez_autogen/mocs_compilation.cpp shapez_autogen/include/src/mainwindow/ui_mainwindow.h | ${cmake_ninja_workdir}CMakeFiles/shapez_autogen ${cmake_ninja_workdir}shapez_autogen/mocs_compilation.cpp ${cmake_ninja_workdir}shapez_autogen/include/src/mainwindow/ui_mainwindow.h: CUSTOM_COMMAND
+build CMakeFiles/shapez_autogen shapez_autogen/mocs_compilation.cpp shapez_autogen/include/src/mainwindow/ui_mainwindow.h shapez_autogen/include/src/first/ui_first.h | ${cmake_ninja_workdir}CMakeFiles/shapez_autogen ${cmake_ninja_workdir}shapez_autogen/mocs_compilation.cpp ${cmake_ninja_workdir}shapez_autogen/include/src/mainwindow/ui_mainwindow.h ${cmake_ninja_workdir}shapez_autogen/include/src/first/ui_first.h: CUSTOM_COMMAND
   COMMAND = cmd.exe /C "cd /D E:\shapez\cmake-build-debug && "C:\Program Files\JetBrains\CLion 2023.2.2\bin\cmake\win\x64\bin\cmake.exe" -E cmake_autogen E:/shapez/cmake-build-debug/CMakeFiles/shapez_autogen.dir/AutogenInfo.json Debug"
   DESC = Automatic MOC and UIC for target shapez
   restat = 1
