@@ -24,6 +24,9 @@ public:
 
 private:
     Ui::first *ui;
+    int windowWidth;
+    int windowHeight;
+
 };
 
 

@@ -26,7 +26,7 @@ public:
     {
         if (first->objectName().isEmpty())
             first->setObjectName(QStringLiteral("first"));
-        first->resize(743, 608);
+        first->resize(1500, 1500);
 
         retranslateUi(first);
 

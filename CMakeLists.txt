@@ -24,6 +24,16 @@ add_executable(shapez src/main.cpp
         src/first/first.cpp
         src/first/first.h
         src/first/first.ui
+        src/Mine/Mine.cpp
+        src/Mine/Mine.h
+        src/DeliveryCenter/DeliveryCenter.cpp
+        src/DeliveryCenter/DeliveryCenter.h
+        src/Facility/Facility.cpp
+        src/Facility/Facility.h
+        src/Toolbar/Toolbar.cpp
+        src/Toolbar/Toolbar.h
+        src/MyRect/MyRect.cpp
+        src/MyRect/MyRect.h
 )
 
 
