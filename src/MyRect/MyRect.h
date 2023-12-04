@@ -6,8 +6,16 @@
 #define SHAPEZ_MYRECT_H
 
 
+#include "../Mine/Mine.h"
+#include "../Facility/Facility.h"
+
 class MyRect
 {
+private :
+    Mine *mine;
+    Facility *facility;
+    bool isMineExist;
+    bool isFacilityExist;
 
 };
 

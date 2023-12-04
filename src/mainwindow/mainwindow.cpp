@@ -105,7 +105,7 @@ void MainWindow::playVideo(const QString &filePath)
     setLayout(layout);
 
     // 设置定时器，2秒后停止播放GIF
-    QTimer::singleShot(2000, this, [this]()
+    QTimer::singleShot(100, this, [this]()
     {
         stopVideo();
     });

@@ -13,6 +13,7 @@
 #include <QMenuBar>
 #include "first.h"
 #include "ui_first.h"
+#include "../MyRect/MyRect.h"
 
 
 first::first(QWidget *parent) :
@@ -41,6 +42,8 @@ first::first(QWidget *parent) :
 
 
     //初始化地图---/
+
+    //初始化空白方格---/
     const int gridSize = 15;
     const int cellSize = windowWidth / gridSize;
 
@@ -56,8 +59,53 @@ first::first(QWidget *parent) :
             scene->addItem(pixmapItem);// 添加方格到场景
         }
     }
+    //---初始化空白方格/
+
+    //初始化交付中心
+    QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
+    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(400, 400)); // 将方格缩放为400x400
+    pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
+    scene->addItem(pixmapItem);// 添加方格到场景
+
+    //初始化矿物
+    //铜(圆形,可切割)
+    for (int i = 4; i < 8; i++)
+    {
+        for (int j = 4; j < 8; j++)
+        {
+
+            // 绘制基本方格
+            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
+            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放为100x100
+            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+            scene->addItem(pixmapItem);// 添加方格到场景
+        }
+    }
+    //铁(方形,不可切割)
+    for (int i = 22; i < 26; i++)
+    {
+        for (int j = 22; j < 26; j++)
+        {
+
+            // 绘制基本方格
+            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
+            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放为100x100
+            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+            scene->addItem(pixmapItem);// 添加方格到场景
+        }
+    }
+
+
+
+
+
+
+
 
     //---初始化地图/
+
+    //初始化空白方格数组
+    MyRect myrect[15][15];
 }
 
 first::~first()
