@@ -32,13 +32,18 @@ first::first(QWidget *parent) :
     setFixedSize(windowWidth, windowHeight);// 固定窗口大小
     // 创建场景
     QGraphicsScene *scene = new QGraphicsScene(this);
-    scene->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2);// 设置场景的大小为窗口的大小4倍
+    scene->setSceneRect(0, 0, 1500 * 2, 1500 * 2);// 设置场景的大小为窗口的大小4倍
 
     // 创建视图
     QGraphicsView *view = new QGraphicsView(scene, this);
-    view->setSceneRect(0, 0, windowWidth * 2, windowHeight * 2); // 视图显示场景的全部
-    view->setGeometry(0, 0, windowWidth, windowHeight); // 固定视图大小
+    view->setSceneRect(0, 0, 1500 * 2, 1500 * 2); // 视图显示场景的全部
+    view->setGeometry(0, 0, 1500, 1500); // 固定视图位置
     view->show();
+    // 将水平滚动条策略设置为始终关闭
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // 将垂直滚动条策略设置为始终关闭
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 
     //初始化地图---/
@@ -105,7 +110,7 @@ first::first(QWidget *parent) :
     //---初始化地图/
 
     //初始化空白方格数组
-    MyRect myrect[15][15];
+    MyRect myrect[30][30];
 }
 
 first::~first()
