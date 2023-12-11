@@ -26,10 +26,6 @@ public:
 
     ~first() override;
 
-
-protected:
-    void mouseMoveEvent(QMouseEvent *event) override;
-
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
@@ -39,13 +35,19 @@ private:
     int windowHeight;
     QGraphicsView *view;
     QGraphicsScene *scene;
+
     QPushButton *binButton;
     QPushButton *conveyorBeltButton;
     QPushButton *minerButton;
     QPushButton *cutMachineButton;
-    QLabel *dragLabel;
+    QGraphicsPixmapItem *pixmapItem;
+    bool bin;
+    bool conveyorBelt;
+    bool miner;
+    bool cutMachine;
 
-    QPointF mousePosition; // 用于保存鼠标位置的变量
+    QMouseEvent *mouseEvent;
+    QPoint windowPos;
 
 
 private slots:

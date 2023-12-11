@@ -34,6 +34,9 @@ add_executable(shapez src/main.cpp
         src/Toolbar/Toolbar.h
         src/MyRect/MyRect.cpp
         src/MyRect/MyRect.h
+        src/second/second.cpp
+        src/second/second.h
+        src/second/second.ui
 )
 
 

@@ -23,6 +23,7 @@ first::first(QWidget *parent) :
     ui->setupUi(this);
     setMouseTracking(true); // 确保启用鼠标追踪
 
+
     setWindowTitle("Shapez");//重命名窗口标题
 
     setWindowIcon(QIcon("../media/logo.png"));//设置窗口图标
@@ -36,19 +37,19 @@ first::first(QWidget *parent) :
     // 创建场景
     scene = new QGraphicsScene(this);
     scene->setSceneRect(0, 0, 1500, 1500);// 设置场景的大小为窗口的大小
-    scene->installEventFilter(this);
+
     // 创建视图
     view = new QGraphicsView(scene, this);
     view->setSceneRect(0, 0, 1500, 1500); // 视图显示场景的全部
     view->setGeometry(0, 0, 1500, 1500); // 固定视图位置
 
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);  //关闭滚动条
 
     view->show();
-    // 将水平滚动条策略设置为始终关闭
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    // 将垂直滚动条策略设置为始终关闭
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setMouseTracking(true);
+    view->viewport()->installEventFilter(this);
 
 
     //初始化地图---/
@@ -115,6 +116,8 @@ first::first(QWidget *parent) :
     binButton->setFixedSize(80, 80);// 设置按钮大小
     binButton->move(1000, 1510);// 移动按钮到底部靠右位置
 
+    bin = false;
+
     connect(binButton, &QPushButton::clicked, this, &first::onBinButtonClick);// 连接按钮的点击信号到槽函数，
     //---创建垃圾桶按钮/
 
@@ -125,6 +128,8 @@ first::first(QWidget *parent) :
     conveyorBeltButton->setFixedSize(80, 80);// 设置按钮大小
     conveyorBeltButton->move(400, 1510);// 移动按钮到底部靠右位置
 
+    conveyorBelt = false;
+
     connect(conveyorBeltButton, &QPushButton::clicked, this, &first::onConveyorBeltButtonClick);// 连接按钮的点击信号到槽函数，
     //---创建传送带按钮/
 
@@ -134,6 +139,8 @@ first::first(QWidget *parent) :
     minerButton->setFixedSize(80, 80);// 设置按钮大小
     minerButton->move(600, 1510);// 移动按钮到底部靠右位置
 
+    miner = false;
+
     connect(minerButton, &QPushButton::clicked, this, &first::onMinerButtonClick);// 连接按钮的点击信号到槽函数，
     //---创建开采器按钮/
 
@@ -142,6 +149,8 @@ first::first(QWidget *parent) :
     cutMachineButton->setIconSize(QSize(70, 70));// 设置按钮显示模式为IconOnly
     cutMachineButton->setFixedSize(80, 80);// 设置按钮大小
     cutMachineButton->move(800, 1510);// 移动按钮到底部靠右位置
+
+    cutMachine = false;
 
     connect(cutMachineButton, &QPushButton::clicked, this, &first::onCutMachineButtonClick);// 连接按钮的点击信号到槽函数，
     //---创建切割机按钮/
@@ -161,44 +170,66 @@ first::~first()
 
 void first::onBinButtonClick()
 {
-    // 创建新的QGraphicsPixmapItem
-    QGraphicsPixmapItem *binItem = new QGraphicsPixmapItem(QPixmap("../media/bin.png"));
-    binItem->setPixmap(binItem->pixmap().scaled(50, 50)); // 设置图片缩放
-    binItem->setPos(0, 0); // 设置位置为鼠标中心
-    scene->addItem(binItem); // 添加到场景中
-}
-
-
-void first::mouseMoveEvent(QMouseEvent *event)
-{
-    QPoint globalMousePos = event->globalPos();
-
-    // 将全局坐标映射到窗口内的局部坐标
-    QPoint localMousePos = mapFromGlobal(globalMousePos);
-
-    // 输出局部坐标
-    qDebug() << "Local Mouse Position: " << localMousePos;
+    bin = true;
+    conveyorBelt = false;
+    miner = false;
+    cutMachine = false;
+    if (pixmapItem != nullptr)
+    {
+        delete pixmapItem;
+        pixmapItem = nullptr;
+    }
+    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/_bin.png"));
+    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50));
+    pixmapItem->setVisible(false);
+    scene->addItem(pixmapItem);
 }
 
 
 void first::onConveyorBeltButtonClick()
 {
-    // 处理按钮点击事件的逻辑
-
-    QMessageBox::information(this, "conButton Clicked", "The conbottom button was clicked!");
+    conveyorBelt = true;
 }
 
 void first::onMinerButtonClick()
 {
-    // 处理按钮点击事件的逻辑
-
-    QMessageBox::information(this, "minButton Clicked", "The minbottom button was clicked!");
+    miner = true;
 }
 
 void first::onCutMachineButtonClick()
 {
-    // 处理按钮点击事件的逻辑
-
-    QMessageBox::information(this, "cutButton Clicked", "The cutbottom button was clicked!");
+    cutMachine = true;
 }
 
+bool first::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == view->viewport() and bin == 1)
+    {
+        if (event->type() == QEvent::MouseMove)
+        {
+
+            auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
+            QPoint windowPos = mouseEvent->pos();
+            windowPos.setX(windowPos.x() - 25);
+            windowPos.setY(windowPos.y() - 25);
+            if (!pixmapItem->isVisible())
+            {
+                pixmapItem->setVisible(true);
+            }
+            qDebug() << "鼠标在窗口中移动。位置：" << windowPos;
+            pixmapItem->setPos(windowPos);
+
+
+        }
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            bin = false;
+            if (pixmapItem != nullptr)
+            {
+                pixmapItem = nullptr;
+            }
+        }
+    }
+
+    return false;
+}

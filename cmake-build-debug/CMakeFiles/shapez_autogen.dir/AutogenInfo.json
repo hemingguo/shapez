@@ -115,6 +115,12 @@
 			"MU",
 			"GFTB6AWTXV/moc_mainwindow.cpp",
 			null
+		],
+		[
+			"E:/shapez/src/second/second.h",
+			"MU",
+			"ALD6RMGVP7/moc_second.cpp",
+			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
@@ -185,7 +191,8 @@
 		[ "E:/shapez/src/Toolbar/Toolbar.cpp", "MU", null ],
 		[ "E:/shapez/src/first/first.cpp", "MU", null ],
 		[ "E:/shapez/src/main.cpp", "MU", null ],
-		[ "E:/shapez/src/mainwindow/mainwindow.cpp", "MU", null ]
+		[ "E:/shapez/src/mainwindow/mainwindow.cpp", "MU", null ],
+		[ "E:/shapez/src/second/second.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

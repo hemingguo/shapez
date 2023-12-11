@@ -25,6 +25,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../first/first.h"
+#include "../second/second.h"
 
 //主窗口构造函数
 MainWindow::MainWindow(QWidget *parent) :
@@ -204,6 +205,8 @@ void MainWindow::onPushButtonClicked()
     first *firstWindow = new first();
     // 显示新窗口
     firstWindow->show();
+
+
     // 关闭当前窗口
     close();
 }
