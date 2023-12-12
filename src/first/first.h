@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
+#include "../Toolbar/Toolbar.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class first; }

@@ -6,17 +6,25 @@
 #define SHAPEZ_MYRECT_H
 
 
+#include <QGraphicsPixmapItem>
 #include "../Mine/Mine.h"
 #include "../Facility/Facility.h"
 
 class MyRect
 {
 private :
+    QPoint position;
     Mine *mine;
     Facility *facility;
     bool isMineExist;
     bool isFacilityExist;
+    QGraphicsPixmapItem *pixmapMineItem;
+    QGraphicsPixmapItem *pixmapFacilityItem;
 
+public:
+    void setPosition(int x, int y);
+
+    QPoint getPosition();
 };
 
 

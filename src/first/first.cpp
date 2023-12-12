@@ -161,6 +161,14 @@ first::first(QWidget *parent) :
 
     //初始化空白方格数组
     MyRect myrect[30][30];
+    for (int i = 0; i < 30; ++i)
+    {
+        for (int j = 0; j < 30; ++j)
+        {
+            myrect[i][j].setPosition(i * 50, j * 50);
+        }
+    }
+    
 }
 
 first::~first()
@@ -209,7 +217,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
         {
 
             auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
-            QPoint windowPos = mouseEvent->pos();
+            windowPos = mouseEvent->pos();
             windowPos.setX(windowPos.x() - 25);
             windowPos.setY(windowPos.y() - 25);
             if (!pixmapItem->isVisible())
