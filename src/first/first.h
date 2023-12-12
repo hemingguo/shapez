@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
 #include "../Toolbar/Toolbar.h"
+#include <QPainter>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class first; }
@@ -28,6 +29,7 @@ public:
     ~first() override;
 
     bool eventFilter(QObject *obj, QEvent *event) override;
+
 
 private:
 

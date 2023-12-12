@@ -206,7 +206,6 @@ void MainWindow::onPushButtonClicked()
     // 显示新窗口
     firstWindow->show();
 
-
     // 关闭当前窗口
     close();
 }

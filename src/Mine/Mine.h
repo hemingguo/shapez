@@ -28,12 +28,13 @@ public:
 class Iron : public Mine
 {
 protected:
-    Iron();
 
     ~Iron();
 
 public:
     void paintIron();
+
+    Iron();
 };
 
 
@@ -42,23 +43,27 @@ class Copper : public Mine
 
 
 protected:
-    Copper();
+
 
     ~Copper();
 
 public:
     void paintCopper();
+
+    Copper();
 };
 
 
 class HalfCopper : public Copper
 {
-    HalfCopper();
+
 
     ~HalfCopper();
 
 public:
     void paintHalfCopper();
+
+    HalfCopper();
 };
 
 

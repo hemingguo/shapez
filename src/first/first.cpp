@@ -2,7 +2,7 @@
 // Created by hemingguo on 2023-12-1.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_first.h" resolved
+
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QtMultimedia/QMediaPlayer>
@@ -18,7 +18,7 @@
 
 
 first::first(QWidget *parent) :
-        QWidget(parent), ui(new Ui::first)
+        QWidget(parent), ui(new Ui::first), pixmapItem(nullptr)
 {
     ui->setupUi(this);
     setMouseTracking(true); // 确保启用鼠标追踪
@@ -159,22 +159,33 @@ first::first(QWidget *parent) :
 
 
 
-    //初始化空白方格数组
+    //初始化空白方格数组(包括矿物填充)
     MyRect myrect[30][30];
     for (int i = 0; i < 30; ++i)
     {
         for (int j = 0; j < 30; ++j)
         {
             myrect[i][j].setPosition(i * 50, j * 50);
+            if (i >= 22 && i <= 25 && j >= 22 && j <= 25)
+            {
+                myrect[i][j].isMineExist = true;
+                myrect[i][j].setMine("iron");
+
+            } else if (i >= 4 && i <= 7 && j >= 4 && j <= 7)
+            {
+                myrect[i][j].isMineExist = true;
+                myrect[i][j].setMine("copper");
+            }
         }
     }
-    
+
 }
 
 first::~first()
 {
     delete ui;
 }
+
 
 void first::onBinButtonClick()
 {
@@ -196,48 +207,85 @@ void first::onBinButtonClick()
 
 void first::onConveyorBeltButtonClick()
 {
+    bin = false;
     conveyorBelt = true;
+    miner = false;
+    cutMachine = false;
+    if (pixmapItem != nullptr)
+    {
+        delete pixmapItem;
+        pixmapItem = nullptr;
+    }
+
 }
 
 void first::onMinerButtonClick()
 {
+    bin = false;
+    conveyorBelt = false;
     miner = true;
+    cutMachine = false;
+    if (pixmapItem != nullptr)
+    {
+        delete pixmapItem;
+        pixmapItem = nullptr;
+    }
+    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/_miner.png"));
+    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50));
+    pixmapItem->setVisible(false);
+    scene->addItem(pixmapItem);
 }
 
 void first::onCutMachineButtonClick()
 {
+    bin = false;
+    conveyorBelt = false;
+    miner = false;
     cutMachine = true;
+    if (pixmapItem != nullptr)
+    {
+        delete pixmapItem;
+        pixmapItem = nullptr;
+    }
 }
 
 bool first::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == view->viewport() and bin == 1)
+    if (obj == view->viewport() and (bin || miner))
     {
-        if (event->type() == QEvent::MouseMove)
+
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+            if (bin) { bin = false; }
+            if (miner) { miner = false; }
+            windowPos.setX((windowPos.x() + 25) / 50 * 50);
+            windowPos.setY((windowPos.y() + 25) / 50 * 50);
+            pixmapItem->setPos(windowPos);
+
+
+            if (pixmapItem)
+            {
+                pixmapItem = nullptr;
+            }
+        } else if (event->type() == QEvent::MouseMove)
         {
 
             auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
             windowPos = mouseEvent->pos();
             windowPos.setX(windowPos.x() - 25);
             windowPos.setY(windowPos.y() - 25);
-            if (!pixmapItem->isVisible())
+
+            if (!(pixmapItem->isVisible()))
             {
                 pixmapItem->setVisible(true);
             }
-            qDebug() << "鼠标在窗口中移动。位置：" << windowPos;
+            //qDebug() << "位置：" << windowPos;
             pixmapItem->setPos(windowPos);
 
 
         }
-        if (event->type() == QEvent::MouseButtonPress)
-        {
-            bin = false;
-            if (pixmapItem != nullptr)
-            {
-                pixmapItem = nullptr;
-            }
-        }
     }
+
 
     return false;
 }

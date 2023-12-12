@@ -73,13 +73,16 @@ bool second::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::MouseMove)
         {
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            QPoint windowPos = mouseEvent->pos();
+            windowPos = mouseEvent->pos();
             qDebug() << "鼠标在窗口中移动。位置：" << windowPos;
             pixmapItem->setPos(windowPos);//按序放置方格
         }
         if (event->type() == QEvent::MouseButtonPress)
         {
             happy = 0;
+            windowPos.setX((windowPos.x() + 25) / 30 * 30);
+            windowPos.setY((windowPos.y() + 25) / 30 * 30);
+            pixmapItem->setPos(windowPos);
         }
     }
 

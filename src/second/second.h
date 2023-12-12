@@ -38,6 +38,7 @@ private:
     QGraphicsScene *scene;
     QPushButton *binButton;
     QGraphicsPixmapItem *pixmapItem;
+    QPoint windowPos;
 private slots:
 
     void onBinButtonClick();

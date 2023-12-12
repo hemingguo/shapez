@@ -15,16 +15,29 @@ class MyRect
 private :
     QPoint position;
     Mine *mine;
-    Facility *facility;
+
+
+public:
     bool isMineExist;
     bool isFacilityExist;
+
+    Facility *facility;
     QGraphicsPixmapItem *pixmapMineItem;
     QGraphicsPixmapItem *pixmapFacilityItem;
 
-public:
+    MyRect();
+
+    ~MyRect();
+
     void setPosition(int x, int y);
 
     QPoint getPosition();
+
+    void setMine(string name);
+
+    Mine *getMine();
+
+
 };
 
 
