@@ -45,3 +45,25 @@ Mine *MyRect::getMine()
 {
     return mine;
 }
+
+void MyRect::setFacility(string name)
+{
+    if (name == "bin")
+    {
+        facility = new Bin;
+    } else if (name == "cutmachine")
+    {
+        facility = new CutMachine;
+    } else if (name == "miner")
+    {
+        facility = new Miner;
+    } else if (name == "conveyorbelt")
+    {
+        facility = new ConveyorBelt;
+    }
+}
+
+Facility *MyRect::getFacility()
+{
+    return facility;
+}

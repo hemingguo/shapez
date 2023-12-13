@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
 #include "../Toolbar/Toolbar.h"
+#include "../MyRect/MyRect.h"
 #include <QPainter>
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +31,7 @@ public:
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 
+    MyRect myrect[30][30];
 
 private:
 
@@ -48,8 +50,8 @@ private:
     bool conveyorBelt;
     bool miner;
     bool cutMachine;
+    QGraphicsPixmapItem *deliveryCenter;
 
-    QMouseEvent *mouseEvent;
     QPoint windowPos;
 
 

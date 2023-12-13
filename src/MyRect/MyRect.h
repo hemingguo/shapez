@@ -14,13 +14,12 @@ class MyRect
 {
 private :
     QPoint position;
-    Mine *mine;
 
 
 public:
     bool isMineExist;
     bool isFacilityExist;
-
+    Mine *mine;
     Facility *facility;
     QGraphicsPixmapItem *pixmapMineItem;
     QGraphicsPixmapItem *pixmapFacilityItem;
@@ -37,6 +36,9 @@ public:
 
     Mine *getMine();
 
+    void setFacility(string name);
+
+    Facility *getFacility();
 
 };
 

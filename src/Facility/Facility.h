@@ -11,5 +11,23 @@ class Facility
 
 };
 
+class Bin : public Facility
+{
+
+};
+
+class Miner : public Facility
+{
+};
+
+class ConveyorBelt : public Facility
+{
+
+};
+
+class CutMachine : public Facility
+{
+
+};
 
 #endif //SHAPEZ_FACILITY_H
