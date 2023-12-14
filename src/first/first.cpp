@@ -49,8 +49,9 @@ first::first(QWidget *parent) :
     view->show();
 
     view->setMouseTracking(true);
-    view->viewport()->installEventFilter(this);
 
+    view->viewport()->installEventFilter(this);
+    installEventFilter(this);
 
     //初始化地图---/
 
@@ -90,14 +91,19 @@ first::first(QWidget *parent) :
             {
                 myrect[i][j].isMineExist = true;
                 myrect[i][j].setMine("copper");
+            } else if (i >= 13 && i <= 16 && j >= 13 && j <= 16)
+            {
+                myrect[i][j].isFacilityExist = true;
             }
         }
+
     }
 
     //初始化交付中心
-    QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
+    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
     pixmapItem->setPixmap(pixmapItem->pixmap().scaled(200, 200)); // 将方格缩放
     pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
+
     scene->addItem(pixmapItem);// 添加方格到场景
 
     //初始化矿物
@@ -106,9 +112,11 @@ first::first(QWidget *parent) :
     {
         for (int j = 4; j < 8; j++)
         {
-            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
+            pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
             pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
             pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+
+
             scene->addItem(pixmapItem);// 添加方格到场景
             myrect[i][j].pixmapMineItem = pixmapItem;
             pixmapItem = nullptr;
@@ -120,7 +128,7 @@ first::first(QWidget *parent) :
     {
         for (int j = 22; j < 26; j++)
         {
-            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
+            pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
             pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
             pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
             scene->addItem(pixmapItem);// 添加方格到场景
@@ -255,8 +263,32 @@ void first::onCutMachineButtonClick()
     }
 }
 
+
 bool first::eventFilter(QObject *obj, QEvent *event)
 {
+
+    // 按Esc取消放置
+    if (obj == this && event->type() == QEvent::KeyPress)
+    {
+        auto keyEvent = dynamic_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Escape)
+        {
+            if (pixmapItem != nullptr)
+            {
+                delete pixmapItem;
+                pixmapItem = nullptr;
+                bin = false;
+                miner = false;
+                cutMachine = false;
+                conveyorBelt = false;
+            }
+            event->accept();
+            // 表示事件已经被处理
+        }
+    }
+
+
+    // 鼠标左键单击删除设备
     if (!bin && !miner && !cutMachine && !conveyorBelt)
     {
         if (obj == view->viewport() && event->type() == QEvent::MouseButtonPress)
@@ -265,38 +297,58 @@ bool first::eventFilter(QObject *obj, QEvent *event)
             windowPos = mouseEvent->pos();
             int i = windowPos.x() / 50;
             int j = windowPos.y() / 50;
+
             if (myrect[i][j].isFacilityExist)
             {
-                qDebug() << "hello" << i << ", " << j;
+                //qDebug() << "hello" << i << ", " << j;
                 delete myrect[i][j].pixmapFacilityItem;
                 myrect[i][j].pixmapFacilityItem = nullptr;
+
+                delete myrect[i][j].facility;
+                myrect[i][j].facility = nullptr;
+
                 myrect[i][j].isFacilityExist = false;
             }
         }
+        event->accept();
     }
-    if (obj == view->viewport() && (bin || miner || cutMachine || conveyorBelt))
-    {
 
+    //放置开采器和垃圾桶设备
+    if (obj == view->viewport() && (bin || miner))
+    {
+        //鼠标按下放置
         if (event->type() == QEvent::MouseButtonPress)
         {
             windowPos.setX((windowPos.x() + 25) / 50 * 50);
             windowPos.setY((windowPos.y() + 25) / 50 * 50);
             int i = windowPos.x() / 50;
             int j = windowPos.y() / 50;
-            if (!myrect[i][j].isFacilityExist)
+
+            if (!myrect[i][j].isFacilityExist && (!myrect[i][j].isMineExist || miner))
             {
-                if (bin) { bin = false; }
-                if (miner) { miner = false; }
+
+                if (bin)
+                {
+                    bin = false;
+                    myrect[i][j].facility = new Bin();
+                }
+                if (miner)
+                {
+                    miner = false;
+                    myrect[i][j].facility = new Miner();
+                }
 
                 pixmapItem->setPos(windowPos);
                 myrect[i][j].isFacilityExist = true;
                 myrect[i][j].pixmapFacilityItem = pixmapItem;
+
                 if (pixmapItem)
                 {
                     pixmapItem = nullptr;
                 }
             }
-        } else if (event->type() == QEvent::MouseMove)
+            event->accept();
+        } else if (event->type() == QEvent::MouseMove)  //鼠标移动
         {
 
             auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
@@ -311,7 +363,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
             //qDebug() << "位置：" << windowPos;
             pixmapItem->setPos(windowPos);
 
-
+            event->accept();
         }
     }
 

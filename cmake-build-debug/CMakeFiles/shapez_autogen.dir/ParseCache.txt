@@ -22,3 +22,5 @@ E:/shapez/src/second/second.h
  mmc:Q_OBJECT
 E:/shapez/src/second/second.cpp
  uic:ui_second.h
+E:/shapez/src/Game/Game.h
+E:/shapez/src/Game/Game.cpp
