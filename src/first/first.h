@@ -45,15 +45,19 @@ private:
     QPushButton *conveyorBeltButton;
     QPushButton *minerButton;
     QPushButton *cutMachineButton;
+    QGraphicsPixmapItem *deliveryCenter;
+
     QGraphicsPixmapItem *pixmapItem;
+    QPoint windowPos;
+
     bool bin;
     bool conveyorBelt;
     bool miner;
     bool cutMachine;
-    QGraphicsPixmapItem *deliveryCenter;
+    bool press;
 
-    QPoint windowPos;
-
+    std::vector<int> previous;
+    int direction;
 
 private slots:
 

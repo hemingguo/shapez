@@ -3,6 +3,8 @@
 //
 
 
+#include <vector>
+
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QtMultimedia/QMediaPlayer>
@@ -11,14 +13,14 @@
 #include <QLabel>
 #include <QTimer>
 #include <QMenuBar>
-#include <QMessageBox>
+
 #include "first.h"
 #include "ui_first.h"
 #include "../MyRect/MyRect.h"
 
 
 first::first(QWidget *parent) :
-        QWidget(parent), ui(new Ui::first), pixmapItem(nullptr)
+        QWidget(parent), ui(new Ui::first), pixmapItem(nullptr), press(false), direction(0)
 {
     ui->setupUi(this);
     setMouseTracking(true); // 确保启用鼠标追踪
@@ -51,7 +53,7 @@ first::first(QWidget *parent) :
     view->setMouseTracking(true);
 
     view->viewport()->installEventFilter(this);
-    installEventFilter(this);
+    installEventFilter(this); // 给窗口先安装一个事件接收器
 
     //初始化地图---/
 
@@ -228,6 +230,10 @@ void first::onConveyorBeltButtonClick()
         delete pixmapItem;
         pixmapItem = nullptr;
     }
+    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/_belt.jpg"));
+    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50));
+    pixmapItem->setVisible(false);
+    scene->addItem(pixmapItem);
 
 }
 
@@ -267,13 +273,13 @@ void first::onCutMachineButtonClick()
 bool first::eventFilter(QObject *obj, QEvent *event)
 {
 
-    // 按Esc取消放置
+    // 按Esc取消放置 or 按下R旋转
     if (obj == this && event->type() == QEvent::KeyPress)
     {
         auto keyEvent = dynamic_cast<QKeyEvent *>(event);
         if (keyEvent->key() == Qt::Key_Escape)
         {
-            if (pixmapItem != nullptr)
+            if (pixmapItem)
             {
                 delete pixmapItem;
                 pixmapItem = nullptr;
@@ -285,7 +291,24 @@ bool first::eventFilter(QObject *obj, QEvent *event)
             event->accept();
             // 表示事件已经被处理
         }
+        if (keyEvent->key() == Qt::Key_R)  // 按R旋转
+        {
+            if (pixmapItem && miner)
+            {
+                // 获取当前变换并进行平移，使得旋转中心在图像中心
+                QTransform currentTransform = pixmapItem->transform();
+                QRectF boundingRect = pixmapItem->boundingRect(); // 获取图像的边界矩形
+                currentTransform.translate(boundingRect.width() / 2, boundingRect.height() / 2);
+                currentTransform.rotate(90);
+                currentTransform.translate(-boundingRect.width() / 2, -boundingRect.height() / 2);
+
+                // 设置新的变换
+                pixmapItem->setTransform(currentTransform);
+                event->accept();
+            }
+        }
     }
+
 
 
     // 鼠标左键单击删除设备
@@ -326,16 +349,15 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
             if (!myrect[i][j].isFacilityExist && (!myrect[i][j].isMineExist || miner))
             {
-
                 if (bin)
                 {
                     bin = false;
-                    myrect[i][j].facility = new Bin();
+                    myrect[i][j].setFacility("bin");
                 }
                 if (miner)
                 {
                     miner = false;
-                    myrect[i][j].facility = new Miner();
+                    myrect[i][j].setFacility("miner");
                 }
 
                 pixmapItem->setPos(windowPos);
@@ -367,6 +389,277 @@ bool first::eventFilter(QObject *obj, QEvent *event)
         }
     }
 
+    // 放置传送带
+    if (obj == view->viewport() && conveyorBelt)
+    {
+
+
+        if (event->type() == QEvent::MouseButtonPress)
+        {
+
+            windowPos.setX((windowPos.x() + 25) / 50 * 50);
+            windowPos.setY((windowPos.y() + 25) / 50 * 50);
+            int i = windowPos.x() / 50;
+            int j = windowPos.y() / 50;
+
+            if (!myrect[i][j].isFacilityExist && !myrect[i][j].isMineExist)
+            {
+                press = true;
+
+                myrect[i][j].setFacility("conveyorbelt");
+                pixmapItem->setPos(windowPos);
+                myrect[i][j].isFacilityExist = true;
+                myrect[i][j].pixmapFacilityItem = pixmapItem;
+                if (pixmapItem)
+                {
+                    pixmapItem = nullptr;
+                }
+                previous.push_back(i);
+                previous.push_back(j);
+            } else
+            {
+                conveyorBelt = false;
+                press = false;
+                if (pixmapItem)
+                {
+                    delete pixmapItem;
+                    pixmapItem = nullptr;
+                }
+            }
+
+
+        }
+
+        if (event->type() == QEvent::MouseButtonRelease)
+        {
+            if (pixmapItem)
+            {
+                pixmapItem = nullptr;
+            }
+            press = false;
+            conveyorBelt = false;
+            previous.clear();
+            direction = 0;
+        }
+
+        if (event->type() == QEvent::MouseMove)
+        {
+
+            if (press == false) // 未按下，只是移动
+            {
+                auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
+                windowPos = mouseEvent->pos();
+                windowPos.setX(windowPos.x() - 25);
+                windowPos.setY(windowPos.y() - 25);
+
+                if (!(pixmapItem->isVisible()))
+                {
+                    pixmapItem->setVisible(true);
+                }
+                //qDebug() << "位置：" << windowPos;
+                pixmapItem->setPos(windowPos);
+
+
+            } else
+            {
+                // 先确定位置
+                auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
+                windowPos = mouseEvent->pos();
+
+
+                // 再安放
+
+                int i = windowPos.x() / 50;
+                int j = windowPos.y() / 50;
+
+                //if (myrect[i][j].isFacilityExist && myrect[i][j].facility->getName() == "conveyorbelt")
+                if ((!myrect[i][j].isFacilityExist && !myrect[i][j].isMineExist))
+                {
+                    windowPos.setX(windowPos.x() / 50 * 50);
+                    windowPos.setY(windowPos.y() / 50 * 50);
+
+
+                    // 考虑拐弯
+                    if (previous.size() < 4)
+                    {
+                        previous.push_back(i);
+                        previous.push_back(j);
+                        if (previous[1] == previous[3])
+                        {
+                            direction = (direction + 1) % 4;
+                            delete myrect[previous[0]][previous[1]].pixmapFacilityItem;
+                            myrect[previous[0]][previous[1]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                    QPixmap("../media/_belt_h.png"));
+                            myrect[previous[0]][previous[1]].pixmapFacilityItem->setPixmap(
+                                    myrect[previous[0]][previous[1]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                            myrect[previous[0]][previous[1]].pixmapFacilityItem->setPos(windowPos.x() - 50,
+                                                                                        windowPos.y());
+
+                            scene->addItem(myrect[previous[0]][previous[1]].pixmapFacilityItem);
+                        }
+
+                    } else
+                    {
+                        if (!(previous[0] == previous[2] && previous[2] == i) &&
+                            !(previous[1] == previous[3] && previous[3] == j))
+                        {
+                            direction = (direction + 1) % 4;
+                            // 左下->上->右
+                            if (previous[0] == previous[2] && previous[2] + 1 == i && previous[1] - 1 == previous[3] &&
+                                previous[3] == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/dr.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x() - 50,
+                                                                                            windowPos.y());
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+
+
+                            }
+                                // 左下->右->上
+                            else if (previous[0] + 1 == previous[2] && previous[2] == i &&
+                                     previous[1] == previous[3] &&
+                                     previous[3] - 1 == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/ul.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x(),
+                                                                                            windowPos.y() + 50);
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+
+
+                            }
+
+                                // 左上->下->右
+                            else if (previous[0] == previous[2] && previous[2] + 1 == i &&
+                                     previous[1] + 1 == previous[3] &&
+                                     previous[3] == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/ur.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x() - 50,
+                                                                                            windowPos.y());
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                                // 左上->右->下
+                            else if (previous[0] + 1 == previous[2] && previous[2] == i &&
+                                     previous[1] == previous[3] &&
+                                     previous[3] + 1 == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/dl.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x(),
+                                                                                            windowPos.y() - 50);
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                                // 右上->下->左
+                            else if (previous[0] == previous[2] && previous[2] - 1 == i &&
+                                     previous[1] + 1 == previous[3] &&
+                                     previous[3] == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/ul.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x() + 50,
+                                                                                            windowPos.y());
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                                // 右上->左->下
+                            else if (previous[0] == previous[2] + 1 && previous[2] == i &&
+                                     previous[1] == previous[3] &&
+                                     previous[3] + 1 == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/dr.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x(),
+                                                                                            windowPos.y() - 50);
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                                // 右下角->上->左
+                            else if (previous[0] == previous[2] && previous[2] - 1 == i &&
+                                     previous[1] - 1 == previous[3] &&
+                                     previous[3] == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/dl.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x() + 50,
+                                                                                            windowPos.y());
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                                // 右下角->左->上
+                            else if (previous[0] == previous[2] + 1 && previous[2] == i &&
+                                     previous[1] == previous[3] &&
+                                     previous[3] - 1 == j)
+                            {
+                                delete myrect[previous[2]][previous[3]].pixmapFacilityItem;
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/ur.png"));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[2]][previous[3]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[2]][previous[3]].pixmapFacilityItem->setPos(windowPos.x(),
+                                                                                            windowPos.y() + 50);
+
+                                scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                            }
+                        }
+
+                        //更新previous
+                        previous[0] = previous[2];
+                        previous[1] = previous[3];
+                        previous[2] = i;
+                        previous[3] = j;
+                    }
+
+                    // 放置当前传送带
+                    myrect[i][j].setFacility("conveyorbelt");
+                    myrect[i][j].isFacilityExist = true;
+                    if (direction == 0 || direction == 2)
+                    {
+                        myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt.jpg"));
+                    } else
+                    {
+                        myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt_h.png"));
+                    }
+                    myrect[i][j].pixmapFacilityItem->setPixmap(
+                            myrect[i][j].pixmapFacilityItem->pixmap().scaled(50, 50));
+                    myrect[i][j].pixmapFacilityItem->setVisible(true);
+                    myrect[i][j].pixmapFacilityItem->setPos(windowPos);
+                    scene->addItem(myrect[i][j].pixmapFacilityItem);
+
+                }
+
+
+            }
+
+        }
+    }
 
     return false;
 }
