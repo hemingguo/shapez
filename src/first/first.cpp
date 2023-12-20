@@ -55,6 +55,7 @@ first::first(QWidget *parent) :
     view->viewport()->installEventFilter(this);
     installEventFilter(this); // 给窗口先安装一个事件接收器
 
+    game = new Game();  //初始化游戏指针
     //初始化地图---/
 
     //初始化空白方格---/
@@ -372,6 +373,9 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 {
                     bin = false;
                     myrect[i][j].setFacility("bin");
+                    pixmapItem->setPos(windowPos);
+                    myrect[i][j].isFacilityExist = true;
+                    myrect[i][j].pixmapFacilityItem = pixmapItem;
                 }
                 if (miner)
                 {
@@ -379,11 +383,12 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                     myrect[i][j].setFacility("miner");
                     static_cast<Miner *>(myrect[i][j].facility)->setDirection(direction);
 
+                    pixmapItem->setPos(windowPos);
+                    myrect[i][j].isFacilityExist = true;
+                    myrect[i][j].pixmapFacilityItem = pixmapItem;
+                    game->dig(myrect, i, j);
                 }
 
-                pixmapItem->setPos(windowPos);
-                myrect[i][j].isFacilityExist = true;
-                myrect[i][j].pixmapFacilityItem = pixmapItem;
 
                 if (pixmapItem)
                 {
@@ -497,7 +502,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 int j = windowPos.y() / 50;
 
 
-                if ((!myrect[i][j].isFacilityExist && !myrect[i][j].isMineExist))
+                if (((!myrect[i][j].isFacilityExist && !myrect[i][j].isMineExist)) || myrect[i][j].isDelivery)
                 {
                     windowPos.setX(windowPos.x() / 50 * 50);
                     windowPos.setY(windowPos.y() / 50 * 50);
@@ -512,17 +517,35 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                         // 如果开始的两个是横着拖动的，那么改变方向
                         if (previous[1] == previous[3])
                         {
-                            direction = (direction + 1) % 4;
-                            delete myrect[previous[0]][previous[1]].pixmapFacilityItem;
-                            myrect[previous[0]][previous[1]].pixmapFacilityItem = new QGraphicsPixmapItem(
-                                    QPixmap("../media/_belt_h.png"));
-                            myrect[previous[0]][previous[1]].pixmapFacilityItem->setPixmap(
-                                    myrect[previous[0]][previous[1]].pixmapFacilityItem->pixmap().scaled(50, 50));
-                            myrect[previous[0]][previous[1]].pixmapFacilityItem->setPos(windowPos.x() - 50,
-                                                                                        windowPos.y());
-                            static_cast<ConveyorBelt *>(myrect[previous[0]][previous[1]].facility)->setDoor(direction);
+                            if (previous[0] < previous[2])
+                            {
+                                direction = (direction + 1) % 4;
+                                delete myrect[previous[0]][previous[1]].pixmapFacilityItem;
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/_belt_h.png"));
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[0]][previous[1]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem->setPos(windowPos.x() - 50,
+                                                                                            windowPos.y());
+                                static_cast<ConveyorBelt *>(myrect[previous[0]][previous[1]].facility)->setDoor(
+                                        direction);
 
-                            scene->addItem(myrect[previous[0]][previous[1]].pixmapFacilityItem);
+                                scene->addItem(myrect[previous[0]][previous[1]].pixmapFacilityItem);
+                            } else
+                            {
+                                direction = (direction + 1) % 4;
+                                delete myrect[previous[0]][previous[1]].pixmapFacilityItem;
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem = new QGraphicsPixmapItem(
+                                        QPixmap("../media/_belt_h.png"));
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem->setPixmap(
+                                        myrect[previous[0]][previous[1]].pixmapFacilityItem->pixmap().scaled(50, 50));
+                                myrect[previous[0]][previous[1]].pixmapFacilityItem->setPos(windowPos.x() + 50,
+                                                                                            windowPos.y());
+                                static_cast<ConveyorBelt *>(myrect[previous[0]][previous[1]].facility)->setDoor(
+                                        direction);
+
+                                scene->addItem(myrect[previous[0]][previous[1]].pixmapFacilityItem);
+                            }
                         }
 
                     } else
@@ -545,7 +568,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
 
-
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "DownR";
                             }
                                 // 左下->右->上
                             else if (previous[0] + 1 == previous[2] && previous[2] == i &&
@@ -562,7 +585,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
 
-
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "UpL";
                             }
 
                                 // 左上->下->右
@@ -579,6 +602,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y());
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "UpR";
                             }
                                 // 左上->右->下
                             else if (previous[0] + 1 == previous[2] && previous[2] == i &&
@@ -594,6 +619,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y() - 50);
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "DownL";
                             }
                                 // 右上->下->左
                             else if (previous[0] == previous[2] && previous[2] - 1 == i &&
@@ -609,6 +635,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y());
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "UpL";
                             }
                                 // 右上->左->下
                             else if (previous[0] == previous[2] + 1 && previous[2] == i &&
@@ -624,8 +651,9 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y() - 50);
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "DownR";
                             }
-                                // 右下角->上->左
+                                // 右下->上->左
                             else if (previous[0] == previous[2] && previous[2] - 1 == i &&
                                      previous[1] - 1 == previous[3] &&
                                      previous[3] == j)
@@ -639,8 +667,9 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y());
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "DownL";
                             }
-                                // 右下角->左->上
+                                // 右下->左->上
                             else if (previous[0] == previous[2] + 1 && previous[2] == i &&
                                      previous[1] == previous[3] &&
                                      previous[3] - 1 == j)
@@ -654,6 +683,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                                                                             windowPos.y() + 50);
 
                                 scene->addItem(myrect[previous[2]][previous[3]].pixmapFacilityItem);
+                                static_cast<ConveyorBelt *>(myrect[previous[2]][previous[3]].facility)->turn = "UpR";
                             }
                         }
 
@@ -663,28 +693,38 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                         previous[2] = i;
                         previous[3] = j;
                     }
-
-                    // 放置当前传送带
-                    myrect[i][j].setFacility("conveyorbelt");
-                    myrect[i][j].isFacilityExist = true;
-                    if (direction == 0 || direction == 2)
+                    if (!myrect[i][j].isDelivery)
                     {
-                        myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt.jpg"));
+                        // 放置当前传送带
+                        myrect[i][j].setFacility("conveyorbelt");
+                        myrect[i][j].isFacilityExist = true;
+                        if (direction == 0 || direction == 2)
+                        {
+                            myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt.jpg"));
+                        } else
+                        {
+                            myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt_h.png"));
+                        }
+
+                        myrect[i][j].pixmapFacilityItem->setPixmap(
+                                myrect[i][j].pixmapFacilityItem->pixmap().scaled(50, 50));
+                        myrect[i][j].pixmapFacilityItem->setVisible(true);
+                        myrect[i][j].pixmapFacilityItem->setPos(windowPos);
+                        scene->addItem(myrect[i][j].pixmapFacilityItem);
+
+
+                        static_cast<ConveyorBelt *>(myrect[i][j].facility)->setDoor(direction);
                     } else
                     {
-                        myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt_h.png"));
+                        if (pixmapItem)
+                        {
+                            pixmapItem = nullptr;
+                        }
+                        press = false;
+                        conveyorBelt = false;
+                        previous.clear();
+                        direction = 0;
                     }
-
-
-                    myrect[i][j].pixmapFacilityItem->setPixmap(
-                            myrect[i][j].pixmapFacilityItem->pixmap().scaled(50, 50));
-                    myrect[i][j].pixmapFacilityItem->setVisible(true);
-                    myrect[i][j].pixmapFacilityItem->setPos(windowPos);
-                    scene->addItem(myrect[i][j].pixmapFacilityItem);
-
-
-                    static_cast<ConveyorBelt *>(myrect[i][j].facility)->setDoor(direction);
-
                 }
 
 

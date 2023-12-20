@@ -46,6 +46,8 @@ private:
 public:
     ConveyorBelt();
 
+    std::string turn;
+
     void setDoor(int x);
 
     int getDoor();

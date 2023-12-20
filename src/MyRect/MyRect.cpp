@@ -5,7 +5,7 @@
 #include "MyRect.h"
 
 MyRect::MyRect() : mine(nullptr), facility(nullptr), pixmapMineItem(nullptr), pixmapFacilityItem(nullptr), isMineExist(
-        false), isFacilityExist(false)
+        false), isFacilityExist(false), isDelivery(false)
 {
 
 }

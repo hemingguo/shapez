@@ -6,11 +6,20 @@
 #define SHAPEZ_GAME_H
 
 #include<iostream>
+#include<QDebug>
+#include"../MyRect/MyRect.h"
+#include"../Facility/Facility.h"
+#include"../Mine/Mine.h"
+
 
 class Game
 {
 public:
-    void test();
+
+
+    void dig(MyRect myrect[30][30], int i, int j);
+
+    void pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj);
 };
 
 

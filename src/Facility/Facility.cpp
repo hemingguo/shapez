@@ -20,6 +20,7 @@ void Facility::setName(std::string str)
 ConveyorBelt::ConveyorBelt()
 {
     setName("conveyorbelt");
+    turn = "null";
 }
 
 int ConveyorBelt::getDoor()

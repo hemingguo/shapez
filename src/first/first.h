@@ -12,10 +12,11 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
+#include <QPainter>
 #include "../Toolbar/Toolbar.h"
 #include "../MyRect/MyRect.h"
 #include "../Facility/Facility.h"
-#include <QPainter>
+#include "../Game/Game.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class first; }
@@ -34,6 +35,7 @@ public:
 
     MyRect myrect[30][30];
 
+    Game *game;
 private:
 
     Ui::first *ui;
