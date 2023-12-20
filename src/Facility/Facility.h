@@ -15,22 +15,40 @@ public:
     std::string getName();
 
     void setName(std::string str);
+
 };
 
 class Bin : public Facility
 {
+public:
+    Bin();
 
 };
 
 class Miner : public Facility
 {
+private:
+    int direction;
+
+public:
+    Miner();
+
+    void setDirection(int x);
+
+    int getDirection();
 };
 
 class ConveyorBelt : public Facility
 {
+private:
+    int door;
+
 public:
     ConveyorBelt();
 
+    void setDoor(int x);
+
+    int getDoor();
 
 };
 

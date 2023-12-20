@@ -14,6 +14,7 @@
 #include <QGraphicsProxyWidget>
 #include "../Toolbar/Toolbar.h"
 #include "../MyRect/MyRect.h"
+#include "../Facility/Facility.h"
 #include <QPainter>
 
 QT_BEGIN_NAMESPACE

@@ -67,17 +67,16 @@ first::first(QWidget *parent) :
         {
 
             // 绘制基本方格
-            QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));//新建方格
+            pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/basic_square.png"));//新建方格
             pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 100)); // 将方格缩放
             pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
             scene->addItem(pixmapItem);// 添加方格到场景
-            deliveryCenter = pixmapItem;
             pixmapItem = nullptr;
         }
     }
     //---初始化空白方格/
 
-    //初始化空白方格数组(包括矿物填充)
+    //初始化空白方格数组(包括矿物填充和交付中心)
 
     for (int i = 0; i < 30; ++i)
     {
@@ -96,6 +95,7 @@ first::first(QWidget *parent) :
             } else if (i >= 13 && i <= 16 && j >= 13 && j <= 16)
             {
                 myrect[i][j].isFacilityExist = true;
+                myrect[i][j].isDelivery = true;
             }
         }
 
@@ -203,6 +203,7 @@ first::~first()
 
 void first::onBinButtonClick()
 {
+
     bin = true;
     conveyorBelt = false;
     miner = false;
@@ -221,6 +222,7 @@ void first::onBinButtonClick()
 
 void first::onConveyorBeltButtonClick()
 {
+    direction = 0;
     bin = false;
     conveyorBelt = true;
     miner = false;
@@ -239,6 +241,7 @@ void first::onConveyorBeltButtonClick()
 
 void first::onMinerButtonClick()
 {
+    direction = 0;
     bin = false;
     conveyorBelt = false;
     miner = true;
@@ -258,6 +261,7 @@ void first::onMinerButtonClick()
 
 void first::onCutMachineButtonClick()
 {
+    direction = 0;
     bin = false;
     conveyorBelt = false;
     miner = false;
@@ -288,6 +292,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 cutMachine = false;
                 conveyorBelt = false;
             }
+
+            direction = 0;
             event->accept();
             // 表示事件已经被处理
         }
@@ -305,8 +311,13 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 // 设置新的变换
                 pixmapItem->setTransform(currentTransform);
                 event->accept();
+
+                //方向改变
+                direction = (direction + 1) % 4;
+
             }
         }
+
     }
 
 
@@ -325,7 +336,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
             int j = windowPos.y() / 50;
 
 
-            if (myrect[i][j].isFacilityExist && !(i >= 13 && i <= 16 && j >= 13 && j <= 16))
+            if (myrect[i][j].isFacilityExist && !myrect[i][j].isDelivery)
             {
                 //qDebug() << "hello" << i << ", " << j;
                 delete myrect[i][j].pixmapFacilityItem;
@@ -366,6 +377,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 {
                     miner = false;
                     myrect[i][j].setFacility("miner");
+                    static_cast<Miner *>(myrect[i][j].facility)->setDirection(direction);
+
                 }
 
                 pixmapItem->setPos(windowPos);
@@ -404,7 +417,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
         if (event->type() == QEvent::MouseButtonPress)
         {
-
+            direction = 0;
             windowPos.setX((windowPos.x() + 25) / 50 * 50);
             windowPos.setY((windowPos.y() + 25) / 50 * 50);
             int i = windowPos.x() / 50;
@@ -418,10 +431,13 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 pixmapItem->setPos(windowPos);
                 myrect[i][j].isFacilityExist = true;
                 myrect[i][j].pixmapFacilityItem = pixmapItem;
+                static_cast<ConveyorBelt *>(myrect[i][j].facility)->setDoor(direction);
+
                 if (pixmapItem)
                 {
                     pixmapItem = nullptr;
                 }
+
                 previous.push_back(i);
                 previous.push_back(j);
             } else
@@ -480,7 +496,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 int i = windowPos.x() / 50;
                 int j = windowPos.y() / 50;
 
-                //if (myrect[i][j].isFacilityExist && myrect[i][j].facility->getName() == "conveyorbelt")
+
                 if ((!myrect[i][j].isFacilityExist && !myrect[i][j].isMineExist))
                 {
                     windowPos.setX(windowPos.x() / 50 * 50);
@@ -492,6 +508,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                     {
                         previous.push_back(i);
                         previous.push_back(j);
+
+                        // 如果开始的两个是横着拖动的，那么改变方向
                         if (previous[1] == previous[3])
                         {
                             direction = (direction + 1) % 4;
@@ -502,6 +520,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                                     myrect[previous[0]][previous[1]].pixmapFacilityItem->pixmap().scaled(50, 50));
                             myrect[previous[0]][previous[1]].pixmapFacilityItem->setPos(windowPos.x() - 50,
                                                                                         windowPos.y());
+                            static_cast<ConveyorBelt *>(myrect[previous[0]][previous[1]].facility)->setDoor(direction);
 
                             scene->addItem(myrect[previous[0]][previous[1]].pixmapFacilityItem);
                         }
@@ -655,11 +674,16 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                     {
                         myrect[i][j].pixmapFacilityItem = new QGraphicsPixmapItem(QPixmap("../media/_belt_h.png"));
                     }
+
+
                     myrect[i][j].pixmapFacilityItem->setPixmap(
                             myrect[i][j].pixmapFacilityItem->pixmap().scaled(50, 50));
                     myrect[i][j].pixmapFacilityItem->setVisible(true);
                     myrect[i][j].pixmapFacilityItem->setPos(windowPos);
                     scene->addItem(myrect[i][j].pixmapFacilityItem);
+
+
+                    static_cast<ConveyorBelt *>(myrect[i][j].facility)->setDoor(direction);
 
                 }
 

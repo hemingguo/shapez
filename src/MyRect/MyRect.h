@@ -19,6 +19,7 @@ private :
 public:
     bool isMineExist;
     bool isFacilityExist;
+    bool isDelivery;
     Mine *mine;
     Facility *facility;
     QGraphicsPixmapItem *pixmapMineItem;
