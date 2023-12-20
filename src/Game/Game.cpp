@@ -4,7 +4,7 @@
 
 #include "Game.h"
 
-void test()
+void Game::test()
 {
-
+    std::cout << "arrive~" << std::endl;
 }

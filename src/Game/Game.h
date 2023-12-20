@@ -5,12 +5,13 @@
 #ifndef SHAPEZ_GAME_H
 #define SHAPEZ_GAME_H
 
+#include<iostream>
 
 class Game
 {
-
+public:
+    void test();
 };
 
-void test();
 
 #endif //SHAPEZ_GAME_H

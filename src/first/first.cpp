@@ -311,17 +311,21 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
 
 
-    // 鼠标左键单击删除设备
+    // 鼠标左键单击删除设备或长按连续删除
     if (!bin && !miner && !cutMachine && !conveyorBelt)
     {
-        if (obj == view->viewport() && event->type() == QEvent::MouseButtonPress)
+        if (obj == view->viewport() &&
+            (event->type() == QEvent::MouseButtonPress ||
+             event->type() == QEvent::MouseMove && press))
         {
+            press = true;
             auto mouseEvent = dynamic_cast<QMouseEvent *>(event);
             windowPos = mouseEvent->pos();
             int i = windowPos.x() / 50;
             int j = windowPos.y() / 50;
 
-            if (myrect[i][j].isFacilityExist)
+
+            if (myrect[i][j].isFacilityExist && !(i >= 13 && i <= 16 && j >= 13 && j <= 16))
             {
                 //qDebug() << "hello" << i << ", " << j;
                 delete myrect[i][j].pixmapFacilityItem;
@@ -332,6 +336,10 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
                 myrect[i][j].isFacilityExist = false;
             }
+        }
+        if (obj == view->viewport() && event->type() == QEvent::MouseButtonRelease)
+        {
+            press = false;
         }
         event->accept();
     }
