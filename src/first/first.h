@@ -17,6 +17,7 @@
 #include "../MyRect/MyRect.h"
 #include "../Facility/Facility.h"
 #include "../Game/Game.h"
+#include "../DeliveryCenter/DeliveryCenter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class first; }
@@ -35,6 +36,8 @@ public:
 
     MyRect myrect[30][30];
 
+    DeliveryCenter *center;
+
     Game *game;
 private:
 
@@ -48,7 +51,7 @@ private:
     QPushButton *conveyorBeltButton;
     QPushButton *minerButton;
     QPushButton *cutMachineButton;
-    QGraphicsPixmapItem *deliveryCenter;
+
 
     QGraphicsPixmapItem *pixmapItem;
     QPoint windowPos;

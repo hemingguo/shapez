@@ -8,7 +8,7 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QtMultimedia/QMediaPlayer>
-#include <QDir>
+
 #include <QMovie>
 #include <QLabel>
 #include <QTimer>
@@ -16,7 +16,6 @@
 
 #include "first.h"
 #include "ui_first.h"
-#include "../MyRect/MyRect.h"
 
 
 first::first(QWidget *parent) :
@@ -55,7 +54,11 @@ first::first(QWidget *parent) :
     view->viewport()->installEventFilter(this);
     installEventFilter(this); // 给窗口先安装一个事件接收器
 
-    game = new Game();  //初始化游戏指针
+
+    center = new DeliveryCenter();//初始化交付中心（数据部分）
+
+    game = new Game(center);  //初始化游戏指针
+
     //初始化地图---/
 
     //初始化空白方格---/
@@ -84,6 +87,8 @@ first::first(QWidget *parent) :
         for (int j = 0; j < 30; ++j)
         {
             myrect[i][j].setPosition(i * 50, j * 50);
+
+
             if (i >= 22 && i <= 25 && j >= 22 && j <= 25)
             {
                 myrect[i][j].isMineExist = true;
@@ -102,12 +107,14 @@ first::first(QWidget *parent) :
 
     }
 
-    //初始化交付中心
+    //初始化交付中心（图形部分）
     pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
     pixmapItem->setPixmap(pixmapItem->pixmap().scaled(200, 200)); // 将方格缩放
     pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
 
     scene->addItem(pixmapItem);// 添加方格到场景
+    center->deliveryCenter = pixmapItem;
+
 
     //初始化矿物
     //铜(圆形,可切割)
@@ -386,7 +393,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                     pixmapItem->setPos(windowPos);
                     myrect[i][j].isFacilityExist = true;
                     myrect[i][j].pixmapFacilityItem = pixmapItem;
-                    game->dig(myrect, i, j);
+                    game->check(myrect);
                 }
 
 
@@ -445,6 +452,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
                 previous.push_back(i);
                 previous.push_back(j);
+
+                game->check(myrect);
             } else
             {
                 conveyorBelt = false;
@@ -714,6 +723,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
 
                         static_cast<ConveyorBelt *>(myrect[i][j].facility)->setDoor(direction);
+
+
                     } else
                     {
                         if (pixmapItem)
@@ -725,6 +736,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                         previous.clear();
                         direction = 0;
                     }
+                    game->check(myrect);
                 }
 
 

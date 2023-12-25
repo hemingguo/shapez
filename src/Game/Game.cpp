@@ -4,9 +4,33 @@
 
 #include "Game.h"
 
+Game::Game(DeliveryCenter *x) : center(x)
+{
+
+}
+
+void Game::check(MyRect myrect[30][30])
+{
+    for (int i = 22; i < 26; i++)
+    {
+        for (int j = 22; j < 26; j++)
+        {
+            dig(myrect, i, j);
+        }
+    }
+    for (int i = 4; i < 8; i++)
+    {
+        for (int j = 4; j < 8; j++)
+        {
+            dig(myrect, i, j);
+        }
+    }
+}
+
 
 void Game::dig(MyRect myrect[30][30], int i, int j)
 {
+
     if (myrect[i][j].isFacilityExist && myrect[i][j].isMineExist && myrect[i][j].getFacility()->getName() == "miner")
     {
         int exit = static_cast<Miner *>(myrect[i][j].facility)->getDirection(); //获取采矿机的出口方向
@@ -17,7 +41,8 @@ void Game::dig(MyRect myrect[30][30], int i, int j)
             {
                 if (static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->getDoor() % 2 == 0) //如果是竖着放的
                 {
-                    pass(myrect, i, j - 1, 0, i, j);
+
+                    pass(myrect, i, j - 1, 0, i, j, myrect[i][j].getMine()->getName(), 0);
 
                 }
             }
@@ -28,7 +53,7 @@ void Game::dig(MyRect myrect[30][30], int i, int j)
             {
                 if (static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->getDoor() % 2 == 1) //如果是横着放的
                 {
-                    pass(myrect, i + 1, j, 1, i, j);
+                    pass(myrect, i + 1, j, 1, i, j, myrect[i][j].getMine()->getName(), 0);
                 }
             }
         } else if (exit == 2)
@@ -38,7 +63,7 @@ void Game::dig(MyRect myrect[30][30], int i, int j)
             {
                 if (static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->getDoor() % 2 == 0) //如果是竖着放的
                 {
-                    pass(myrect, i, j + 1, 2, i, j);
+                    pass(myrect, i, j + 1, 2, i, j, myrect[i][j].getMine()->getName(), 0);
                 }
             }
         } else
@@ -48,22 +73,25 @@ void Game::dig(MyRect myrect[30][30], int i, int j)
             {
                 if (static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->getDoor() % 2 == 1) //如果是横着放的
                 {
-                    pass(myrect, i - 1, j, 3, i, j);
+                    pass(myrect, i - 1, j, 3, i, j, myrect[i][j].getMine()->getName(), 0);
                 }
             }
         }
     }
 }
 
-void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
+void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj, string mineName, int distance)
 {
+
     if (static_cast<ConveyorBelt *>(myrect[i][j].facility)->turn == "null")  // 如果该传送带不转弯，即为直的
     {
         if (sign == 0 && j - 1 >= 0)  //从下方 向上 传过来的
         {
             if (myrect[i][j - 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j - 1);
             } else if (myrect[i][j - 1].isFacilityExist &&
                        myrect[i][j - 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -73,7 +101,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownR" ||
                      static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i, j - 1, sign, oi, oj);
+                    pass(myrect, i, j - 1, sign, oi, oj, mineName, distance + 1);
                 }
             }
 
@@ -81,7 +109,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i + 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i + 1, j);
             } else if (myrect[i + 1][j].isFacilityExist &&
                        myrect[i + 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -91,7 +121,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i + 1, j, sign, oi, oj);
+                    pass(myrect, i + 1, j, sign, oi, oj, mineName, distance + 1);
                 }
             }
 
@@ -99,7 +129,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i][j + 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j + 1);
             } else if (myrect[i][j + 1].isFacilityExist &&
                        myrect[i][j + 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -109,14 +141,16 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpR"))
                 {
-                    pass(myrect, i, j + 1, sign, oi, oj);
+                    pass(myrect, i, j + 1, sign, oi, oj, mineName, distance + 1);
                 }
             }
         } else if (sign == 3 && i - 1 >= 0)// 从右边 向左 传过来的
         {
             if (myrect[i - 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i - 1, j);
             } else if (myrect[i - 1][j].isFacilityExist &&
                        myrect[i - 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -126,7 +160,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "UpR" ||
                      static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "DownR"))
                 {
-                    pass(myrect, i - 1, j, sign, oi, oj);
+                    pass(myrect, i - 1, j, sign, oi, oj, mineName, distance + 1);
                 }
             }
         }
@@ -136,7 +170,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i - 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i - 1, j);
             } else if (myrect[i - 1][j].isFacilityExist &&
                        myrect[i - 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -146,14 +182,16 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "UpR" ||
                      static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "DownR"))
                 {
-                    pass(myrect, i - 1, j, 3, oi, oj);
+                    pass(myrect, i - 1, j, 3, oi, oj, mineName, distance + 1);
                 }
             }
         } else // 从左方向下传递
         {
             if (myrect[i][j + 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j + 1);
             } else if (myrect[i][j + 1].isFacilityExist &&
                        myrect[i][j + 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -163,7 +201,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpR"))
                 {
-                    pass(myrect, i, j + 1, 2, oi, oj);
+                    pass(myrect, i, j + 1, 2, oi, oj, mineName, distance + 1);
                 }
             }
         }
@@ -174,7 +212,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i + 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i + 1, j);
             } else if (myrect[i + 1][j].isFacilityExist &&
                        myrect[i + 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -184,14 +224,16 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i + 1, j, 1, oi, oj);
+                    pass(myrect, i + 1, j, 1, oi, oj, mineName, distance + 1);
                 }
             }
         } else // 从右方向下传递
         {
             if (myrect[i][j + 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j + 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j + 1);
             } else if (myrect[i][j + 1].isFacilityExist &&
                        myrect[i][j + 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -201,7 +243,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpR"))
                 {
-                    pass(myrect, i, j + 1, 2, oi, oj);
+                    pass(myrect, i, j + 1, 2, oi, oj, mineName, distance + 1);
                 }
             }
         }
@@ -211,7 +253,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i - 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i - 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i - 1, j);
             } else if (myrect[i - 1][j].isFacilityExist &&
                        myrect[i - 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -221,14 +265,16 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "UpR" ||
                      static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "DownR"))
                 {
-                    pass(myrect, i - 1, j, 3, oi, oj);
+                    pass(myrect, i - 1, j, 3, oi, oj, mineName, distance + 1);
                 }
             }
         } else // 从左向上传递
         {
             if (myrect[i][j - 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j - 1);
             } else if (myrect[i][j - 1].isFacilityExist &&
                        myrect[i][j - 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -238,7 +284,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownR" ||
                      static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i, j - 1, 0, oi, oj);
+                    pass(myrect, i, j - 1, 0, oi, oj, mineName, distance + 1);
                 }
             }
         }
@@ -248,7 +294,9 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
         {
             if (myrect[i + 1][j].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i + 1 << ", " << j << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i + 1, j);
             } else if (myrect[i + 1][j].isFacilityExist &&
                        myrect[i + 1][j].getFacility()->getName() == "conveyorbelt")
             {
@@ -258,14 +306,16 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "UpL" ||
                      static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i + 1, j, 1, oi, oj);
+                    pass(myrect, i + 1, j, 1, oi, oj, mineName, distance + 1);
                 }
             }
         } else // 从右向上传递
         {
             if (myrect[i][j - 1].isDelivery)
             {
-                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << endl;
+                cout << "arrive! start form " << oi << ", " << oj << " to " << i << ", " << j - 1 << " mine: "
+                     << mineName << " distance: " << distance + 1 << endl;
+                center->arrival(mineName, distance + 1, i, j - 1);
             } else if (myrect[i][j - 1].isFacilityExist &&
                        myrect[i][j - 1].getFacility()->getName() == "conveyorbelt")
             {
@@ -275,7 +325,7 @@ void Game::pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj)
                     (static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownR" ||
                      static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownL"))
                 {
-                    pass(myrect, i, j - 1, 0, oi, oj);
+                    pass(myrect, i, j - 1, 0, oi, oj, mineName, distance + 1);
                 }
             }
         }

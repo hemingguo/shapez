@@ -7,19 +7,27 @@
 
 #include<iostream>
 #include<QDebug>
+#include <QTimer>
 #include"../MyRect/MyRect.h"
 #include"../Facility/Facility.h"
 #include"../Mine/Mine.h"
+#include"../DeliveryCenter/DeliveryCenter.h"
 
 
 class Game
 {
 public:
+    DeliveryCenter *center;
 
+    explicit Game(DeliveryCenter *x = nullptr);
+
+    void check(MyRect myrect[30][30]);
 
     void dig(MyRect myrect[30][30], int i, int j);
 
-    void pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj);
+    void pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj, string mineName, int distance);
+
+
 };
 
 
