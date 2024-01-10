@@ -55,9 +55,9 @@ first::first(QWidget *parent) :
     installEventFilter(this); // 给窗口先安装一个事件接收器
 
 
-    center = new DeliveryCenter();//初始化交付中心（数据部分）
+    center = new DeliveryCenter(scene, view);//初始化交付中心（数据部分）
 
-    game = new Game(center);  //初始化游戏指针
+    game = new Game(center);  //初始化游戏逻辑
 
     //初始化地图---/
 
@@ -107,13 +107,46 @@ first::first(QWidget *parent) :
 
     }
 
-    //初始化交付中心（图形部分）
+    //初始化交付中心（图形部分）------
     pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
     pixmapItem->setPixmap(pixmapItem->pixmap().scaled(200, 200)); // 将方格缩放
     pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
 
-    scene->addItem(pixmapItem);// 添加方格到场景
     center->deliveryCenter = pixmapItem;
+    scene->addItem(center->deliveryCenter);// 添加交付中心到场景
+
+    //copper记数部分
+    center->copper_p = new QGraphicsPixmapItem(QPixmap("../media/copper_mine.png"));
+    center->copper_p->setPixmap(center->copper_p->pixmap().scaled(30, 30));
+    center->copper_p->setPos(14 * cellSize + 20, 13 * cellSize + 30);
+    scene->addItem(center->copper_p);
+
+    center->copper_p_gewei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->copper_p_gewei->setPixmap(center->copper_p_gewei->pixmap().scaled(30, 30));
+    center->copper_p_gewei->setPos(15 * cellSize + 40, 13 * cellSize + 30);
+    scene->addItem(center->copper_p_gewei);
+
+    center->copper_p_shiwei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->copper_p_shiwei->setPixmap(center->copper_p_shiwei->pixmap().scaled(30, 30));
+    center->copper_p_shiwei->setPos(15 * cellSize + 10, 13 * cellSize + 30);
+    scene->addItem(center->copper_p_shiwei);
+
+    //iron记数部分
+    center->iron_p = new QGraphicsPixmapItem(QPixmap("../media/iron_mine.png"));
+    center->iron_p->setPixmap(center->iron_p->pixmap().scaled(30, 30));
+    center->iron_p->setPos(14 * cellSize + 20, 14 * cellSize + 15);
+    scene->addItem(center->iron_p);
+
+    //half_copper记数部分
+    center->half_copper_p = new QGraphicsPixmapItem(QPixmap("../media/half_copper_mine.png"));
+    center->half_copper_p->setPixmap(center->half_copper_p->pixmap().scaled(30, 30));
+    center->half_copper_p->setPos(14 * cellSize + 20, 15 * cellSize);
+    scene->addItem(center->half_copper_p);
+
+
+
+    //------初始化交付中心（图形部分）
+
 
 
     //初始化矿物

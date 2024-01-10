@@ -154,7 +154,7 @@ void MainWindow::onVideoStopped()
     connect(pushButton, &QPushButton::clicked, this, &MainWindow::onPushButtonClicked);
 
     //自定义字体
-    QString fontPath = "../media/方正宋刻本秀楷简.TTF";  // 替换为您的字体文件路径
+    QString fontPath = "../media/方正宋刻本秀楷简.TTF";  // 替换为字体文件路径
     int fontId = QFontDatabase::addApplicationFont(fontPath);
     QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
     QFont customFont(fontFamilies.first(), 35);  // 替换字体名称和字号
