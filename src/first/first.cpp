@@ -137,12 +137,31 @@ first::first(QWidget *parent) :
     center->iron_p->setPos(14 * cellSize + 20, 14 * cellSize + 15);
     scene->addItem(center->iron_p);
 
+    center->iron_p_gewei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->iron_p_gewei->setPixmap(center->iron_p_gewei->pixmap().scaled(30, 30));
+    center->iron_p_gewei->setPos(15 * cellSize + 40, 14 * cellSize + 15);
+    scene->addItem(center->iron_p_gewei);
+
+    center->iron_p_shiwei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->iron_p_shiwei->setPixmap(center->iron_p_shiwei->pixmap().scaled(30, 30));
+    center->iron_p_shiwei->setPos(15 * cellSize + 10, 14 * cellSize + 15);
+    scene->addItem(center->iron_p_shiwei);
+
     //half_copper记数部分
     center->half_copper_p = new QGraphicsPixmapItem(QPixmap("../media/half_copper_mine.png"));
     center->half_copper_p->setPixmap(center->half_copper_p->pixmap().scaled(30, 30));
     center->half_copper_p->setPos(14 * cellSize + 20, 15 * cellSize);
     scene->addItem(center->half_copper_p);
 
+    center->half_copper_p_gewei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->half_copper_p_gewei->setPixmap(center->half_copper_p_gewei->pixmap().scaled(30, 30));
+    center->half_copper_p_gewei->setPos(15 * cellSize + 40, 15 * cellSize);
+    scene->addItem(center->half_copper_p_gewei);
+
+    center->half_copper_p_shiwei = new QGraphicsPixmapItem(QPixmap("../media/0.png"));
+    center->half_copper_p_shiwei->setPixmap(center->half_copper_p_shiwei->pixmap().scaled(30, 30));
+    center->half_copper_p_shiwei->setPos(15 * cellSize + 10, 15 * cellSize);
+    scene->addItem(center->half_copper_p_shiwei);
 
 
     //------初始化交付中心（图形部分）
@@ -387,7 +406,11 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 myrect[i][j].facility = nullptr;
 
                 myrect[i][j].isFacilityExist = false;
+
+                center->around_examine(myrect);
             }
+
+
         }
         if (obj == view->viewport() && event->type() == QEvent::MouseButtonRelease)
         {

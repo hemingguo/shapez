@@ -12,6 +12,7 @@
 #include <QTimerEvent>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsView>
+#include "../MyRect/MyRect.h"
 
 
 class Around
@@ -37,10 +38,18 @@ public :
 
     void arrival(std::string mineName, int distance, int i, int j);
 
+    int examine(MyRect myrect[30][30], int i, int j);
+
+    int test(MyRect myrect[30][30], int i, int j, int sign);
+
+    void around_examine(MyRect myrect[30][30]);
+
     QGraphicsView *first_view;
     QGraphicsScene *first_scene;
 
     QGraphicsPixmapItem *deliveryCenter;
+
+    // 三个货物的图片及数量指针
     QGraphicsPixmapItem *copper_p;
     QGraphicsPixmapItem *copper_p_gewei;
     QGraphicsPixmapItem *copper_p_shiwei;
@@ -54,7 +63,7 @@ public :
     QGraphicsPixmapItem *half_copper_p_shiwei;
 
 private:
-    Around around[30][30];
+    Around around[30][30]; // 表示交付中心最外层的格子（用于接受货物）
     int total_value;
 
     int copper_num;
