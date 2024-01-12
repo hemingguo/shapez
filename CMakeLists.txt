@@ -39,6 +39,8 @@ add_executable(shapez src/main.cpp
         src/second/second.ui
         src/Game/Game.cpp
         src/Game/Game.h
+        src/Good/Good.cpp
+        src/Good/Good.h
 )
 
 

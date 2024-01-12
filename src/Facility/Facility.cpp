@@ -34,7 +34,7 @@ void ConveyorBelt::setDoor(int x)
 }
 
 //Miner
-Miner::Miner()
+Miner::Miner() : cur(2)
 {
     setName("miner");
 }

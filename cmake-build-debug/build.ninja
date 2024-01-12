@@ -137,6 +137,14 @@ build CMakeFiles/shapez.dir/src/Game/Game.cpp.obj: CXX_COMPILER__shapez_unscanne
   OBJECT_DIR = CMakeFiles\shapez.dir
   OBJECT_FILE_DIR = CMakeFiles\shapez.dir\src\Game
 
+build CMakeFiles/shapez.dir/src/Good/Good.cpp.obj: CXX_COMPILER__shapez_unscanned_Debug E$:/shapez/src/Good/Good.cpp || cmake_object_order_depends_target_shapez
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIAWIDGETS_LIB -DQT_MULTIMEDIA_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles\shapez.dir\src\Good\Good.cpp.obj.d
+  FLAGS = -g -std=gnu++1z -fdiagnostics-color=always
+  INCLUDES = -IE:/shapez/cmake-build-debug/shapez_autogen/include -isystem E:/QT/5.9.1/mingw53_32/include -isystem E:/QT/5.9.1/mingw53_32/include/QtCore -isystem E:/QT/5.9.1/mingw53_32/./mkspecs/win32-g++ -isystem E:/QT/5.9.1/mingw53_32/include/QtGui -isystem E:/QT/5.9.1/mingw53_32/include/QtANGLE -isystem E:/QT/5.9.1/mingw53_32/include/QtWidgets -isystem E:/QT/5.9.1/mingw53_32/include/QtMultimedia -isystem E:/QT/5.9.1/mingw53_32/include/QtNetwork -isystem E:/QT/5.9.1/mingw53_32/include/QtMultimediaWidgets
+  OBJECT_DIR = CMakeFiles\shapez.dir
+  OBJECT_FILE_DIR = CMakeFiles\shapez.dir\src\Good
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target shapez
@@ -145,7 +153,7 @@ build CMakeFiles/shapez.dir/src/Game/Game.cpp.obj: CXX_COMPILER__shapez_unscanne
 #############################################
 # Link the executable shapez.exe
 
-build shapez.exe: CXX_EXECUTABLE_LINKER__shapez_Debug CMakeFiles/shapez.dir/shapez_autogen/mocs_compilation.cpp.obj CMakeFiles/shapez.dir/src/main.cpp.obj CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj CMakeFiles/shapez.dir/src/first/first.cpp.obj CMakeFiles/shapez.dir/src/Mine/Mine.cpp.obj CMakeFiles/shapez.dir/src/DeliveryCenter/DeliveryCenter.cpp.obj CMakeFiles/shapez.dir/src/Facility/Facility.cpp.obj CMakeFiles/shapez.dir/src/Toolbar/Toolbar.cpp.obj CMakeFiles/shapez.dir/src/MyRect/MyRect.cpp.obj CMakeFiles/shapez.dir/src/second/second.cpp.obj CMakeFiles/shapez.dir/src/Game/Game.cpp.obj | E$:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a || shapez_autogen
+build shapez.exe: CXX_EXECUTABLE_LINKER__shapez_Debug CMakeFiles/shapez.dir/shapez_autogen/mocs_compilation.cpp.obj CMakeFiles/shapez.dir/src/main.cpp.obj CMakeFiles/shapez.dir/src/mainwindow/mainwindow.cpp.obj CMakeFiles/shapez.dir/src/first/first.cpp.obj CMakeFiles/shapez.dir/src/Mine/Mine.cpp.obj CMakeFiles/shapez.dir/src/DeliveryCenter/DeliveryCenter.cpp.obj CMakeFiles/shapez.dir/src/Facility/Facility.cpp.obj CMakeFiles/shapez.dir/src/Toolbar/Toolbar.cpp.obj CMakeFiles/shapez.dir/src/MyRect/MyRect.cpp.obj CMakeFiles/shapez.dir/src/second/second.cpp.obj CMakeFiles/shapez.dir/src/Game/Game.cpp.obj CMakeFiles/shapez.dir/src/Good/Good.cpp.obj | E$:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a E$:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a || shapez_autogen
   FLAGS = -g
   LINK_LIBRARIES = E:/QT/5.9.1/mingw53_32/lib/libQt5MultimediaWidgetsd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Widgetsd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Multimediad.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Guid.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Networkd.a  E:/QT/5.9.1/mingw53_32/lib/libQt5Cored.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\shapez.dir

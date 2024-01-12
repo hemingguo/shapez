@@ -20,6 +20,8 @@ DeliveryCenter::DeliveryCenter() : total_value(0), copper_num(0), iron_num(0), h
     half_copper_p = nullptr;
     half_copper_p_gewei = nullptr;
     half_copper_p_shiwei = nullptr;
+
+    grade = nullptr;
 }
 
 DeliveryCenter::DeliveryCenter(QGraphicsScene *s, QGraphicsView *v) : total_value(0), copper_num(0), iron_num(0),
@@ -39,6 +41,8 @@ DeliveryCenter::DeliveryCenter(QGraphicsScene *s, QGraphicsView *v) : total_valu
     half_copper_p = nullptr;
     half_copper_p_gewei = nullptr;
     half_copper_p_shiwei = nullptr;
+
+    grade = nullptr;
 }
 
 
@@ -98,15 +102,101 @@ void DeliveryCenter::timerEvent(QTimerEvent *event)
                 {
                     half_copper_num++;
                     total_value += 5;
+
+                    delete half_copper_p_gewei;
+                    delete half_copper_p_shiwei;
+                    int gewei = half_copper_num % 10;
+                    int shiwei = half_copper_num / 10;
+                    QString name_g = "../media/" + QString::number(gewei) + ".png";
+                    QString name_s = "../media/" + QString::number(shiwei) + ".png";
+                    half_copper_p_gewei = new QGraphicsPixmapItem(QPixmap(name_g));
+                    half_copper_p_gewei->setPixmap(half_copper_p_gewei->pixmap().scaled(30, 30));
+                    half_copper_p_gewei->setPos(15 * 50 + 40, 15 * 50);
+                    first_scene->addItem(half_copper_p_gewei);
+
+                    half_copper_p_shiwei = new QGraphicsPixmapItem(QPixmap(name_s));
+                    half_copper_p_shiwei->setPixmap(half_copper_p_shiwei->pixmap().scaled(30, 30));
+                    half_copper_p_shiwei->setPos(15 * 50 + 10, 15 * 50);
+                    first_scene->addItem(half_copper_p_shiwei);
                 }
                 qDebug() << total_value;
-                qDebug() << "copper: " << copper_num << ", iron: " << iron_num;
+                qDebug() << "copper: " << copper_num << ", iron: " << iron_num << ", half_copper: " << half_copper_num;
             }
 
         }
     }
 
 
+}
+
+void DeliveryCenter::acc(std::string mineName)
+{
+
+    if (mineName == "copper")
+    {
+        copper_num++;
+        total_value += 10;
+
+        delete copper_p_gewei;
+        delete copper_p_shiwei;
+        int gewei = copper_num % 10;
+        int shiwei = copper_num / 10;
+        QString name_g = "../media/" + QString::number(gewei) + ".png";
+        QString name_s = "../media/" + QString::number(shiwei) + ".png";
+        copper_p_gewei = new QGraphicsPixmapItem(QPixmap(name_g));
+        copper_p_gewei->setPixmap(copper_p_gewei->pixmap().scaled(30, 30));
+        copper_p_gewei->setPos(15 * 50 + 40, 13 * 50 + 30);
+        first_scene->addItem(copper_p_gewei);
+
+        copper_p_shiwei = new QGraphicsPixmapItem(QPixmap(name_s));
+        copper_p_shiwei->setPixmap(copper_p_shiwei->pixmap().scaled(30, 30));
+        copper_p_shiwei->setPos(15 * 50 + 10, 13 * 50 + 30);
+        first_scene->addItem(copper_p_shiwei);
+
+
+    } else if (mineName == "iron")
+    {
+        iron_num++;
+        total_value += 5;
+
+        delete iron_p_gewei;
+        delete iron_p_shiwei;
+        int gewei = iron_num % 10;
+        int shiwei = iron_num / 10;
+        QString name_g = "../media/" + QString::number(gewei) + ".png";
+        QString name_s = "../media/" + QString::number(shiwei) + ".png";
+        iron_p_gewei = new QGraphicsPixmapItem(QPixmap(name_g));
+        iron_p_gewei->setPixmap(iron_p_gewei->pixmap().scaled(30, 30));
+        iron_p_gewei->setPos(15 * 50 + 40, 14 * 50 + 15);
+        first_scene->addItem(iron_p_gewei);
+
+        iron_p_shiwei = new QGraphicsPixmapItem(QPixmap(name_s));
+        iron_p_shiwei->setPixmap(iron_p_shiwei->pixmap().scaled(30, 30));
+        iron_p_shiwei->setPos(15 * 50 + 10, 14 * 50 + 15);
+        first_scene->addItem(iron_p_shiwei);
+    } else if (mineName == "halfcopper")
+    {
+        half_copper_num++;
+        total_value += 5;
+
+        delete half_copper_p_gewei;
+        delete half_copper_p_shiwei;
+        int gewei = half_copper_num % 10;
+        int shiwei = half_copper_num / 10;
+        QString name_g = "../media/" + QString::number(gewei) + ".png";
+        QString name_s = "../media/" + QString::number(shiwei) + ".png";
+        half_copper_p_gewei = new QGraphicsPixmapItem(QPixmap(name_g));
+        half_copper_p_gewei->setPixmap(half_copper_p_gewei->pixmap().scaled(30, 30));
+        half_copper_p_gewei->setPos(15 * 50 + 40, 15 * 50);
+        first_scene->addItem(half_copper_p_gewei);
+
+        half_copper_p_shiwei = new QGraphicsPixmapItem(QPixmap(name_s));
+        half_copper_p_shiwei->setPixmap(half_copper_p_shiwei->pixmap().scaled(30, 30));
+        half_copper_p_shiwei->setPos(15 * 50 + 10, 15 * 50);
+        first_scene->addItem(half_copper_p_shiwei);
+    }
+    qDebug() << total_value;
+    qDebug() << "copper: " << copper_num << ", iron: " << iron_num << ", half_copper: " << half_copper_num;
 }
 
 void DeliveryCenter::arrival(std::string mineName, int distance, int i, int j)

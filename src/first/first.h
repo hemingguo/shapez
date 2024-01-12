@@ -40,7 +40,7 @@ public:
 
     Game *game;
 private:
-
+    QTimer *timer;
     Ui::first *ui;
     int windowWidth;
     int windowHeight;
@@ -74,6 +74,8 @@ private slots:
     void onMinerButtonClick();
 
     void onCutMachineButtonClick();
+
+    void updateScene();
 };
 
 

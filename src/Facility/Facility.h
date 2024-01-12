@@ -6,6 +6,8 @@
 #define SHAPEZ_FACILITY_H
 
 #include<iostream>
+#include <QTimer>
+
 
 class Facility
 {
@@ -31,11 +33,16 @@ private:
     int direction;
 
 public:
+
+    float cur;
+
     Miner();
 
     void setDirection(int x);
 
     int getDirection();
+
+
 };
 
 class ConveyorBelt : public Facility

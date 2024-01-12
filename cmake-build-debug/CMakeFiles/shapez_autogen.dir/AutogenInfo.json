@@ -97,6 +97,7 @@
 			null
 		],
 		[ "E:/shapez/src/Game/Game.h", "MU", "DLIWQPMI5Q/moc_Game.cpp", null ],
+		[ "E:/shapez/src/Good/Good.h", "MU", "KX4LZAGRAT/moc_Good.cpp", null ],
 		[ "E:/shapez/src/Mine/Mine.h", "MU", "Y3W7ENOVGF/moc_Mine.cpp", null ],
 		[
 			"E:/shapez/src/MyRect/MyRect.h",
@@ -188,6 +189,7 @@
 		[ "E:/shapez/src/DeliveryCenter/DeliveryCenter.cpp", "MU", null ],
 		[ "E:/shapez/src/Facility/Facility.cpp", "MU", null ],
 		[ "E:/shapez/src/Game/Game.cpp", "MU", null ],
+		[ "E:/shapez/src/Good/Good.cpp", "MU", null ],
 		[ "E:/shapez/src/Mine/Mine.cpp", "MU", null ],
 		[ "E:/shapez/src/MyRect/MyRect.cpp", "MU", null ],
 		[ "E:/shapez/src/Toolbar/Toolbar.cpp", "MU", null ],

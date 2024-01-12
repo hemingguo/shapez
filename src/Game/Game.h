@@ -17,17 +17,22 @@
 class Game
 {
 public:
+
+    static float miner_speed;
+    static float belt_speed;
+    static float cut_speed;
+
     DeliveryCenter *center;
 
-    explicit Game(DeliveryCenter *x = nullptr);
+    explicit Game(DeliveryCenter *x = nullptr, QGraphicsScene *s = nullptr);
 
     void check(MyRect myrect[30][30]);
 
     void dig(MyRect myrect[30][30], int i, int j);
 
-    void pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj, string mineName, int distance);
+    //void pass(MyRect myrect[30][30], int i, int j, int sign, int oi, int oj, string mineName, int distance);
 
-
+    QGraphicsScene *scene;
 };
 
 

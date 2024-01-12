@@ -57,7 +57,7 @@ first::first(QWidget *parent) :
 
     center = new DeliveryCenter(scene, view);//初始化交付中心（数据部分）
 
-    game = new Game(center);  //初始化游戏逻辑
+    game = new Game(center, scene);  //初始化游戏逻辑
 
     //初始化地图---/
 
@@ -249,7 +249,10 @@ first::first(QWidget *parent) :
     //---创建切割机按钮/
 
 
-
+    // 创建定时器，
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &first::updateScene);
+    timer->start(20); // 每20毫秒触发一次
 
 
 
@@ -337,6 +340,7 @@ void first::onCutMachineButtonClick()
     pixmapItem->setVisible(false);
 
     scene->addItem(pixmapItem);
+    pixmapItem->setZValue(20);
 }
 
 
@@ -469,6 +473,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                 }
                 if (cutMachine)
                 {
+
 
                     if (direction == 0)
                     {
@@ -912,4 +917,11 @@ bool first::eventFilter(QObject *obj, QEvent *event)
     }
 
     return false;
+}
+
+void first::updateScene()
+{
+    game->check(myrect);
+
+    scene->update();
 }

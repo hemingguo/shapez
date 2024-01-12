@@ -38,6 +38,9 @@ public :
 
     void arrival(std::string mineName, int distance, int i, int j);
 
+    void acc(std::string mineName);
+
+
     int examine(MyRect myrect[30][30], int i, int j);
 
     int test(MyRect myrect[30][30], int i, int j, int sign);
@@ -61,6 +64,10 @@ public :
     QGraphicsPixmapItem *half_copper_p;
     QGraphicsPixmapItem *half_copper_p_gewei;
     QGraphicsPixmapItem *half_copper_p_shiwei;
+
+    //第几个关卡（任务）
+    QGraphicsPixmapItem *grade;
+
 
 private:
     Around around[30][30]; // 表示交付中心最外层的格子（用于接受货物）
