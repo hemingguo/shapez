@@ -46,6 +46,7 @@ void Game::dig(MyRect myrect[30][30], int i, int j)
 
                 }
             }
+
         } else if (exit == 1)
         {
             if (i + 1 < 30 && myrect[i + 1][j].isFacilityExist &&

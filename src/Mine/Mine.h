@@ -63,6 +63,8 @@ class HalfCopper : public Copper
 public:
     void paintHalfCopper();
 
+    std::string l_or_r;
+
     HalfCopper();
 };
 

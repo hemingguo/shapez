@@ -55,3 +55,8 @@ Bin::Bin()
 {
     setName("bin");
 }
+
+CutMachine::CutMachine()
+{
+    setName("cutmachine");
+}

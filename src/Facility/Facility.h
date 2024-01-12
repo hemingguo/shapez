@@ -56,7 +56,11 @@ public:
 
 class CutMachine : public Facility
 {
+public:
+    CutMachine();
 
+    std::string l_or_r;
+    int direction;
 };
 
 #endif //SHAPEZ_FACILITY_H

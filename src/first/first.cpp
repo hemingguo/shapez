@@ -331,6 +331,12 @@ void first::onCutMachineButtonClick()
         delete pixmapItem;
         pixmapItem = nullptr;
     }
+
+    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/_cut_machine.png"));
+    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(100, 50));
+    pixmapItem->setVisible(false);
+
+    scene->addItem(pixmapItem);
 }
 
 
@@ -359,18 +365,28 @@ bool first::eventFilter(QObject *obj, QEvent *event)
         }
         if (keyEvent->key() == Qt::Key_R)  // 按R旋转
         {
-            if (pixmapItem && miner)
+            if (pixmapItem && (miner || cutMachine))
             {
-                // 获取当前变换并进行平移，使得旋转中心在图像中心
-                QTransform currentTransform = pixmapItem->transform();
-                QRectF boundingRect = pixmapItem->boundingRect(); // 获取图像的边界矩形
-                currentTransform.translate(boundingRect.width() / 2, boundingRect.height() / 2);
-                currentTransform.rotate(90);
-                currentTransform.translate(-boundingRect.width() / 2, -boundingRect.height() / 2);
+                if (miner)  // 旋转采矿机
+                {
+                    // 获取当前变换并进行平移，使得旋转中心在图像中心
+                    QTransform currentTransform = pixmapItem->transform();
+                    QRectF boundingRect = pixmapItem->boundingRect(); // 获取图像的边界矩形
+                    currentTransform.translate(boundingRect.width() / 2, boundingRect.height() / 2);
+                    currentTransform.rotate(90);
+                    currentTransform.translate(-boundingRect.width() / 2, -boundingRect.height() / 2);
+                    pixmapItem->setTransform(currentTransform);
+                    event->accept();
+                } else if (cutMachine) // 旋转切割机
+                {
+                    QTransform currentTransform = pixmapItem->transform();
+                    QRectF boundingRect = pixmapItem->boundingRect();
+                    currentTransform.translate(boundingRect.center().x(), boundingRect.top());
+                    currentTransform.rotate(90);
+                    pixmapItem->setTransform(currentTransform);
+                    event->accept();
+                }
 
-                // 设置新的变换
-                pixmapItem->setTransform(currentTransform);
-                event->accept();
 
                 //方向改变
                 direction = (direction + 1) % 4;
@@ -419,8 +435,8 @@ bool first::eventFilter(QObject *obj, QEvent *event)
         event->accept();
     }
 
-    //放置开采器和垃圾桶设备
-    if (obj == view->viewport() && (bin || miner))
+    //放置开采器，切割机和垃圾桶设备
+    if (obj == view->viewport() && (bin || miner || cutMachine))
     {
         //鼠标按下放置
         if (event->type() == QEvent::MouseButtonPress)
@@ -451,7 +467,101 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                     myrect[i][j].pixmapFacilityItem = pixmapItem;
                     game->check(myrect);
                 }
+                if (cutMachine)
+                {
 
+                    if (direction == 0)
+                    {
+
+                        if (i + 1 < 30 && !myrect[i + 1][j].isFacilityExist && !myrect[i + 1][j].isMineExist)
+                        {
+                            cutMachine = false;
+
+                            myrect[i][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j].facility)->l_or_r = "left";
+                            myrect[i][j].isFacilityExist = true;
+
+                            myrect[i + 1][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i + 1][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i + 1][j].facility)->l_or_r = "right";
+                            myrect[i + 1][j].isFacilityExist = true;
+
+                            pixmapItem->setPos(windowPos);
+
+                            myrect[i][j].pixmapFacilityItem = pixmapItem;
+
+                            game->check(myrect);
+
+                        }
+                    } else if (direction == 1)
+                    {
+                        if (j + 1 < 30 && !myrect[i][j + 1].isFacilityExist && !myrect[i][j + 1].isMineExist)
+                        {
+                            cutMachine = false;
+
+                            myrect[i][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j].facility)->l_or_r = "left";
+                            myrect[i][j].isFacilityExist = true;
+
+                            myrect[i][j + 1].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j + 1].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j + 1].facility)->l_or_r = "right";
+                            myrect[i][j + 1].isFacilityExist = true;
+
+                            pixmapItem->setPos(windowPos);
+
+                            myrect[i][j].pixmapFacilityItem = pixmapItem;
+
+                            game->check(myrect);
+                        }
+                    } else if (direction == 2)
+                    {
+                        if (i - 1 >= 0 && !myrect[i - 1][j].isFacilityExist && !myrect[i - 1][j].isMineExist)
+                        {
+                            cutMachine = false;
+
+                            myrect[i][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j].facility)->l_or_r = "left";
+                            myrect[i][j].isFacilityExist = true;
+
+                            myrect[i - 1][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i - 1][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i - 1][j].facility)->l_or_r = "right";
+                            myrect[i - 1][j].isFacilityExist = true;
+
+                            pixmapItem->setPos(windowPos);
+
+                            myrect[i][j].pixmapFacilityItem = pixmapItem;
+
+                            game->check(myrect);
+                        }
+                    } else if (direction == 3)
+                    {
+                        if (j - 1 >= 0 && !myrect[i][j - 1].isFacilityExist && !myrect[i][j - 1].isMineExist)
+                        {
+                            cutMachine = false;
+
+                            myrect[i][j].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j].facility)->l_or_r = "left";
+                            myrect[i][j].isFacilityExist = true;
+
+                            myrect[i][j - 1].setFacility("cutmachine");
+                            static_cast<CutMachine *>(myrect[i][j - 1].facility)->direction = direction;
+                            static_cast<CutMachine *>(myrect[i][j - 1].facility)->l_or_r = "right";
+                            myrect[i][j - 1].isFacilityExist = true;
+
+                            pixmapItem->setPos(windowPos);
+
+                            myrect[i][j].pixmapFacilityItem = pixmapItem;
+
+                            game->check(myrect);
+                        }
+                    }
+                }
 
                 if (pixmapItem)
                 {

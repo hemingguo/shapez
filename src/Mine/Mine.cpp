@@ -62,6 +62,7 @@ HalfCopper::HalfCopper()
     name = "halfcopper";
     value = 5;
     divisible = false;
+    l_or_r = "unknown";
 }
 
 HalfCopper::~HalfCopper() {}
