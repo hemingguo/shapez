@@ -15,17 +15,6 @@
 #include "../MyRect/MyRect.h"
 
 
-class Around
-{
-public:
-    std::string mineName;
-    bool isWork;
-    int id;
-
-    Around();
-};
-
-
 class DeliveryCenter : public QWidget
 {
 Q_OBJECT
@@ -34,18 +23,9 @@ public :
 
     explicit DeliveryCenter(QGraphicsScene *s, QGraphicsView *v);
 
-    void timerEvent(QTimerEvent *event) override;
-
-    void arrival(std::string mineName, int distance, int i, int j);
 
     void acc(std::string mineName);
 
-
-    int examine(MyRect myrect[30][30], int i, int j);
-
-    int test(MyRect myrect[30][30], int i, int j, int sign);
-
-    void around_examine(MyRect myrect[30][30]);
 
     QGraphicsView *first_view;
     QGraphicsScene *first_scene;
@@ -65,17 +45,19 @@ public :
     QGraphicsPixmapItem *half_copper_p_gewei;
     QGraphicsPixmapItem *half_copper_p_shiwei;
 
-    //第几个关卡（任务）
+    //第几个关卡（任务）图片指针
     QGraphicsPixmapItem *grade;
-
-
+    static int grade_n;
+    static int total_value;
+    static int up;
+    static int hasDouble;
 private:
-    Around around[30][30]; // 表示交付中心最外层的格子（用于接受货物）
-    int total_value;
+
 
     int copper_num;
     int iron_num;
     int half_copper_num;
+    QGraphicsTextItem textItem;
 
 
 };

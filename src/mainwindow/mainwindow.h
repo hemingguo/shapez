@@ -11,6 +11,7 @@
 #include <QtMultimediaWidgets/QVideoWidget>
 #include <QtMultimedia/QMediaPlayer>
 #include <QVBoxLayout>
+#include <QMediaPlaylist>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,6 +35,10 @@ private:
     QMovie *movie;
     QLabel *label;
     QPushButton *pushButton;
+    QPushButton *shop;
+    QPushButton *again;
+    QMediaPlayer mediaPlayer;
+    QMediaPlaylist playlist;
 
     void playVideo(const QString &filePath);
 
@@ -42,6 +47,10 @@ private:
     void clearLayout(QLayout *layout);
 
     void onPushButtonClicked();
+
+    void onShopClicked();
+
+    void onAgainClicked();
 
 signals:
 

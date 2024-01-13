@@ -13,11 +13,15 @@
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
 #include <QPainter>
+#include <QPlainTextEdit>
+#include <QMediaPlaylist>
+#include <QMediaPlayer>
 #include "../Toolbar/Toolbar.h"
 #include "../MyRect/MyRect.h"
 #include "../Facility/Facility.h"
 #include "../Game/Game.h"
 #include "../DeliveryCenter/DeliveryCenter.h"
+#include "../Good/Good.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class first; }
@@ -40,6 +44,7 @@ public:
 
     Game *game;
 private:
+
     QTimer *timer;
     Ui::first *ui;
     int windowWidth;
@@ -52,10 +57,12 @@ private:
     QPushButton *minerButton;
     QPushButton *cutMachineButton;
 
-
+    int cur_n;
     QGraphicsPixmapItem *pixmapItem;
     QPoint windowPos;
-
+    QPlainTextEdit *textItem;
+    QPlainTextEdit *help1;
+    QPlainTextEdit *help2;
     bool bin;
     bool conveyorBelt;
     bool miner;

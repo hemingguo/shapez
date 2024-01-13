@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QMediaPlaylist>
+#include <QDir>
 #include "mainwindow/mainwindow.h"
 #include "first/first.h"
 

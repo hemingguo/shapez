@@ -4,6 +4,8 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_second.h" resolved
 
+#include <QFontDatabase>
+#include <QMessageBox>
 #include "second.h"
 #include "ui_second.h"
 
@@ -22,42 +24,102 @@ second::second(QWidget *parent) :
     windowHeight = this->height();
 
 
-    setFixedSize(windowWidth, windowHeight);// 固定窗口大小
-    // 创建场景
-    scene = new QGraphicsScene(this);
-    scene->setSceneRect(0, 0, 600, 400);// 设置场景的大小为窗口的大小
+    //升级1
+    Button1 = new QPushButton(this);
+    Button1->setObjectName(QStringLiteral("pushButton1"));
+    Button1->setText("200金币升级交付中心大小4*4->5*5");// 设置按钮的文本
+    Button1->setGeometry(100, 50, 400, 100);// 设置按钮的大小和位置
 
-    // 创建视图
-    view = new QGraphicsView(scene, this);
-    view->setSceneRect(0, 0, 600, 400); // 视图显示场景的全部
-    view->setGeometry(0, 0, 600, 400); // 固定视图位置
+    //按钮事件绑定
+    connect(Button1, &QPushButton::clicked, this, &second::on1Click);
 
-
-    view->show();
-    // 将水平滚动条策略设置为始终关闭
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    // 将垂直滚动条策略设置为始终关闭
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    //自定义字体
+    QString fontPath = "../media/方正宋刻本秀楷简.TTF";  // 替换为字体文件路径
+    int fontId = QFontDatabase::addApplicationFont(fontPath);
+    QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
+    QFont customFont(fontFamilies.first(), 10);  // 替换字体名称和字号
+    Button1->setFont(customFont);
 
 
-    view->setMouseTracking(true);
-    view->viewport()->installEventFilter(this);
 
 
-    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/bin.png"));//新建方格
-    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
-    pixmapItem->setPos(0, 0);//按序放置方格
-    scene->addItem(pixmapItem);// 添加方格到场景
 
-    // 创建垃圾桶按钮---/
-    binButton = new QPushButton(QIcon("../media/bin.png"), "", this);
-    binButton->setIconSize(QSize(50, 50));// 设置按钮显示模式为IconOnly
-    binButton->setFixedSize(50, 50);// 设置按钮大小
-    binButton->move(200, 400);// 移动按钮到底部靠右位置
+// 设置样式
+    Button1->setStyleSheet("QPushButton {"
+                           "border-radius: 50px;"  // 设置圆角半径
+                           "background-color:  #98F5FF;"  // 设置按钮背景颜色
+                           "color: blue;"  // 设置文字颜色
+                           "}"
+                           "QPushButton:hover {"
+                           "background-color: #96CDCD;"  // 鼠标悬停时的背景颜色
+                           "}");
+    Button1->show();// 显示按钮
 
-    connect(binButton, &QPushButton::clicked, this, &second::onBinButtonClick);// 连接按钮的点击信号到槽函数，
-    //---创建垃圾桶按钮/
+
+//升级2
+    Button2 = new QPushButton(this);
+    Button2->setObjectName(QStringLiteral("pushButton2"));
+    Button2->setText("400金币升级矿物价值（翻倍！）");// 设置按钮的文本
+    Button2->setGeometry(100, 200, 400, 100);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(Button2, &QPushButton::clicked, this, &second::on2Click);
+
+    //自定义字体
+
+    Button2->setFont(customFont);
+
+
+
+
+
+// 设置样式
+    Button2->setStyleSheet("QPushButton {"
+                           "border-radius: 50px;"  // 设置圆角半径
+                           "background-color:  #98F5FF;"  // 设置按钮背景颜色
+                           "color: blue;"  // 设置文字颜色
+                           "}"
+                           "QPushButton:hover {"
+                           "background-color: #96CDCD;"  // 鼠标悬停时的背景颜色
+                           "}");
+    Button2->show();// 显示按钮
+
+    //升级3
+    Button3 = new QPushButton(this);
+    Button3->setObjectName(QStringLiteral("pushButton3"));
+    Button3->setText("300金币升级矿物地大小2*2->4*4");// 设置按钮的文本
+    Button3->setGeometry(100, 350, 400, 100);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(Button3, &QPushButton::clicked, this, &second::on3Click);
+
+    //自定义字体
+
+    Button3->setFont(customFont);
+
+
+
+
+
+// 设置样式
+    Button3->setStyleSheet("QPushButton {"
+                           "border-radius: 50px;"  // 设置圆角半径
+                           "background-color:  #98F5FF;"  // 设置按钮背景颜色
+                           "color: blue;"  // 设置文字颜色
+                           "}"
+                           "QPushButton:hover {"
+                           "background-color: #96CDCD;"  // 鼠标悬停时的背景颜色
+                           "}");
+    Button3->show();// 显示按钮
+
+
+// 当前金币数
+    money = new QPlainTextEdit(this);
+    money->setPlainText("Your current money is : " + QString::number(DeliveryCenter::total_value));
+    money->setStyleSheet(
+            "color: green; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 12pt;");
+
+    money->setGeometry(100, 500, 400, 50);
 }
 
 
@@ -66,32 +128,81 @@ second::~second()
     delete ui;
 }
 
-bool second::eventFilter(QObject *obj, QEvent *event)
+void second::on1Click()
 {
-    if (obj == view->viewport() and happy == 1)  // 检查事件是否与视图视口相关
+    if (Game::DC_update)
     {
-        if (event->type() == QEvent::MouseMove)
-        {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-            windowPos = mouseEvent->pos();
-            qDebug() << "鼠标在窗口中移动。位置：" << windowPos;
-            pixmapItem->setPos(windowPos);//按序放置方格
-        }
-        if (event->type() == QEvent::MouseButtonPress)
-        {
-            happy = 0;
-            windowPos.setX((windowPos.x() + 25) / 30 * 30);
-            windowPos.setY((windowPos.y() + 25) / 30 * 30);
-            pixmapItem->setPos(windowPos);
-        }
-    }
+        QMessageBox::information(this, "Information", "已经...已经升级过啦，笨蛋！");
+    } else if (DeliveryCenter::total_value >= 200)
+    {
 
-    // 继续传播事件
-    return false;
+        DeliveryCenter::total_value -= 200;
+        delete money;
+        money = new QPlainTextEdit(this);
+        money->setPlainText("Your current money is : " + QString::number(DeliveryCenter::total_value));
+        money->setStyleSheet(
+                "color: green; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 12pt;");
+
+        money->setGeometry(100, 500, 400, 50);
+        money->show();
+        Game::DC_update = true;
+
+
+    } else
+    {
+        QMessageBox::information(this, "Information", "金币不足噢-v-,交付矿物获取金币叭QAQ");
+    }
 }
 
-void second::onBinButtonClick()
+void second::on2Click()
 {
-    happy = 1;
+    if (DeliveryCenter::hasDouble == 2)
+    {
+        QMessageBox::information(this, "Information", "已经...已经升级过啦，笨蛋！");
+    } else if (DeliveryCenter::total_value >= 400)
+    {
 
+
+        DeliveryCenter::total_value -= 400;
+        DeliveryCenter::hasDouble = 2;
+        delete money;
+        money = new QPlainTextEdit(this);
+        money->setPlainText("Your current money is : " + QString::number(DeliveryCenter::total_value));
+        money->setStyleSheet(
+                "color: green; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 12pt;");
+
+        money->setGeometry(100, 500, 400, 50);
+        money->show();
+
+    } else
+    {
+        QMessageBox::information(this, "Information", "金币不足噢-v-,交付矿物获取金币叭QAQ");
+    }
+
+}
+
+void second::on3Click()
+{
+    if (Game::Mine_update)
+    {
+        QMessageBox::information(this, "Information", "已经...已经升级过啦，笨蛋！");
+    } else if (DeliveryCenter::total_value >= 300)
+    {
+
+
+        DeliveryCenter::total_value -= 300;
+        delete money;
+        money = new QPlainTextEdit(this);
+        money->setPlainText("Your current money is : " + QString::number(DeliveryCenter::total_value));
+        money->setStyleSheet(
+                "color: green; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 12pt;");
+
+        money->setGeometry(100, 500, 400, 50);
+        money->show();
+        Game::Mine_update = true;
+
+    } else
+    {
+        QMessageBox::information(this, "Information", "金币不足噢-v-,交付矿物获取金币叭QAQ");
+    }
 }

@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QMenuBar>
 #include <QFontDatabase>
+#include <QMediaPlaylist>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // 连接[停止信号]到[槽函数]
     connect(this, &MainWindow::videoStopped, this, &MainWindow::onVideoStopped);//呈现开始游戏画面
+
 
 }
 
@@ -105,8 +107,8 @@ void MainWindow::playVideo(const QString &filePath)
     layout->setAlignment(label, Qt::AlignCenter);  // 让label在布局中居中
     setLayout(layout);
 
-    // 设置定时器，2秒后停止播放GIF
-    QTimer::singleShot(100, this, [this]()
+    // 设置定时器，1秒后停止播放GIF
+    QTimer::singleShot(1000, this, [this]()
     {
         stopVideo();
     });
@@ -142,12 +144,28 @@ void MainWindow::onVideoStopped()
         clearLayout(layout);
     }
 
+// 创建媒体播放器和媒体播放列表
 
+    mediaPlayer.setPlaylist(&playlist);
+
+    // 添加背景音乐文件到播放列表
+    // 获取当前应用程序的工作目录
+    QDir currentDir = QDir::current();
+    currentDir.cdUp(); // 切换到上一级目录
+    QString absolutePath = currentDir.absolutePath() + "/media/sing.mp3";
+
+    // 添加背景音乐文件到播放列表
+    playlist.addMedia(QUrl::fromLocalFile(absolutePath));
+    playlist.setCurrentIndex(0);  // 设置当前播放的音乐索引
+    playlist.setPlaybackMode(QMediaPlaylist::Loop);// 循环播放
+    mediaPlayer.setVolume(50); // 设置音量为 50%
+    // 开始播放音乐
+    mediaPlayer.play();
     //开始游戏按钮-------------------/
 
     pushButton = new QPushButton(this);
     pushButton->setObjectName(QStringLiteral("pushButton"));
-    pushButton->setText("开始游戏");// 设置按钮的文本
+    pushButton->setText("新的游戏");// 设置按钮的文本
     pushButton->setGeometry(400, 500, 700, 200);// 设置按钮的大小和位置
 
     //按钮事件绑定
@@ -159,6 +177,9 @@ void MainWindow::onVideoStopped()
     QStringList fontFamilies = QFontDatabase::applicationFontFamilies(fontId);
     QFont customFont(fontFamilies.first(), 35);  // 替换字体名称和字号
     pushButton->setFont(customFont);
+
+
+
 
 
 // 设置样式
@@ -174,7 +195,67 @@ void MainWindow::onVideoStopped()
 
     //----------------------开始游戏按钮/
 
+// 商店按钮---------------------/
 
+    shop = new QPushButton(this);
+    shop->setObjectName(QStringLiteral("shopButton"));
+    shop->setText("商城");// 设置按钮的文本
+    shop->setGeometry(500, 800, 500, 100);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(shop, &QPushButton::clicked, this, &MainWindow::onShopClicked);
+    shop->setFont(customFont);
+    shop->setStyleSheet("QPushButton {"
+                        "border-radius: 50px;"  // 设置圆角半径
+                        "background-color:  #32CD32;"  // 设置按钮背景颜色
+                        "color: white;"  // 设置文字颜色
+                        "}"
+                        "QPushButton:hover {"
+                        "background-color: #45a049;"  // 鼠标悬停时的背景颜色
+                        "}");
+    shop->show();// 显示按钮
+
+// -----------------------商店按钮/
+    shop = new QPushButton(this);
+    shop->setObjectName(QStringLiteral("shopButton"));
+    shop->setText("商城");// 设置按钮的文本
+    shop->setGeometry(500, 800, 500, 100);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(shop, &QPushButton::clicked, this, &MainWindow::onShopClicked);
+    shop->setFont(customFont);
+    shop->setStyleSheet("QPushButton {"
+                        "border-radius: 50px;"  // 设置圆角半径
+                        "background-color:  #32CD32;"  // 设置按钮背景颜色
+                        "color: white;"  // 设置文字颜色
+                        "}"
+                        "QPushButton:hover {"
+                        "background-color: #45a049;"  // 鼠标悬停时的背景颜色
+                        "}");
+    shop->show();// 显示按钮
+
+// 继续游戏-------------------------/
+    again = new QPushButton(this);
+    again->setObjectName(QStringLiteral("againButton"));
+    again->setText("继续游戏");// 设置按钮的文本
+    again->setGeometry(500, 1000, 500, 100);// 设置按钮的大小和位置
+
+    //按钮事件绑定
+    connect(again, &QPushButton::clicked, this, &MainWindow::onAgainClicked);
+    again->setFont(customFont);
+    again->setStyleSheet("QPushButton {"
+                         "border-radius: 50px;"  // 设置圆角半径
+                         "background-color:  #32CD32;"  // 设置按钮背景颜色
+                         "color: white;"  // 设置文字颜色
+                         "}"
+                         "QPushButton:hover {"
+                         "background-color: #45a049;"  // 鼠标悬停时的背景颜色
+                         "}");
+    again->show();// 显示按钮
+
+
+
+// -----------------------------继续游戏/
     //放置logo图片---------------------/
 
     QLabel *imageLabel = new QLabel(this);
@@ -190,7 +271,7 @@ void MainWindow::onVideoStopped()
     //文字说明---------------------/
     QLabel *descriptionLabel = new QLabel(this);
     descriptionLabel->setText("欢迎来到异形工厂，尽情发挥你的聪明才智吧！");
-    descriptionLabel->setGeometry(400, 1000, 700, 50);
+    descriptionLabel->setGeometry(400, 1200, 700, 50);
     descriptionLabel->setFont(QFont("Arial", 16));
     descriptionLabel->setStyleSheet("color: rgb(0, 216, 230);");
     descriptionLabel->setAlignment(Qt::AlignCenter);
@@ -198,14 +279,37 @@ void MainWindow::onVideoStopped()
     //---------------------文字说明/
 }
 
-// 开始游戏按钮点击事件槽函数
+// 开始新的游戏按钮点击事件槽函数
 void MainWindow::onPushButtonClicked()
 {
+    DeliveryCenter::total_value = 0;
+    Game::miner_speed = 2;
+    Game::belt_speed = 1;
+    Game::cut_speed = 0.5;
+    DeliveryCenter::grade_n = 1;
+    DeliveryCenter::total_value = 0;
+    DeliveryCenter::up = 0;
     // 创建新窗口对象
     first *firstWindow = new first();
     // 显示新窗口
     firstWindow->show();
 
-    // 关闭当前窗口
-    close();
+
+}
+
+void MainWindow::onShopClicked()
+{
+    second *secondWindow = new second();
+    secondWindow->show();
+
+}
+
+void MainWindow::onAgainClicked()
+{
+
+    Game::again = true;
+    // 创建新窗口对象
+    first *firstWindow = new first();
+    // 显示新窗口
+    firstWindow->show();
 }

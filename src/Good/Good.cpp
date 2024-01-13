@@ -9,9 +9,8 @@ Good::Good(DeliveryCenter *cen, MyRect myrect[30][30], QGraphicsScene *s, int xi
         : oi(0), oj(0),
           mine_pix(nullptr)
 {
-    miner_speed = 2;
-    belt_speed = 1;
-    cut_speed = 2;
+
+    //qDebug() << Good::belt_speed;
     name = mineName;
     i = xi;
     j = xj;
@@ -19,14 +18,17 @@ Good::Good(DeliveryCenter *cen, MyRect myrect[30][30], QGraphicsScene *s, int xi
     center = cen;
     timer = new QTimer(this);
     scene = s;
-
+    cut_speed = Game::cut_speed;
+    belt_speed = Game::belt_speed;
     connect(timer, &QTimer::timeout, this, std::bind(&Good::pass, this, myrect));
-    timer->start(50 * belt_speed);
+    timer->start(50);
 
 }
 
 void Good::pass(MyRect myrect[30][30])
 {
+    belt_speed = Game::belt_speed;
+    cut_speed = Game::cut_speed;
     if (mine_pix != nullptr)
     {
         mine_pix->setZValue(10);
@@ -159,9 +161,12 @@ void Good::pass(MyRect myrect[30][30])
                              static_cast<ConveyorBelt *>(myrect[i][j - 1].facility)->turn == "DownL"))
                         {
 
-
-                            mine_pix->setPos(mine_pix->pos().x(), mine_pix->pos().y() - 2 * belt_speed);
-                            j = mine_pix->pos().y() / 50 + 1;
+                            if (myrect[i + 1][j - 1].isFacilityExist &&
+                                myrect[i + 1][j - 1].getFacility()->getName() == "bin")
+                            {
+                                mine_pix->setPos(mine_pix->pos().x(), mine_pix->pos().y() - 2 * cut_speed);
+                                j = mine_pix->pos().y() / 50 + 1;
+                            }
 
                         }
 
@@ -184,8 +189,12 @@ void Good::pass(MyRect myrect[30][30])
                             (static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "UpL" ||
                              static_cast<ConveyorBelt *>(myrect[i + 1][j].facility)->turn == "DownL"))
                         {
-                            mine_pix->setPos(mine_pix->pos().x() + 2 * belt_speed, mine_pix->pos().y());
-                            i = mine_pix->pos().x() / 50;
+                            if (myrect[i + 1][j + 1].isFacilityExist &&
+                                myrect[i + 1][j + 1].getFacility()->getName() == "bin")
+                            {
+                                mine_pix->setPos(mine_pix->pos().x() + 2 * cut_speed, mine_pix->pos().y());
+                                i = mine_pix->pos().x() / 50;
+                            }
                         }
                     }
 
@@ -206,8 +215,12 @@ void Good::pass(MyRect myrect[30][30])
                             (static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpL" ||
                              static_cast<ConveyorBelt *>(myrect[i][j + 1].facility)->turn == "UpR"))
                         {
-                            mine_pix->setPos(mine_pix->pos().x(), mine_pix->pos().y() + 2 * belt_speed);
-                            j = mine_pix->pos().y() / 50;
+                            if (myrect[i - 1][j + 1].isFacilityExist &&
+                                myrect[i - 1][j + 1].getFacility()->getName() == "bin")
+                            {
+                                mine_pix->setPos(mine_pix->pos().x(), mine_pix->pos().y() + 2 * cut_speed);
+                                j = mine_pix->pos().y() / 50;
+                            }
                         }
                     }
                 } else if (sign == 3 && i - 1 >= 0)// 从右边 向左 传过来的
@@ -227,8 +240,13 @@ void Good::pass(MyRect myrect[30][30])
                             (static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "UpR" ||
                              static_cast<ConveyorBelt *>(myrect[i - 1][j].facility)->turn == "DownR"))
                         {
-                            mine_pix->setPos(mine_pix->pos().x() - 2 * belt_speed, mine_pix->pos().y());
-                            i = mine_pix->pos().x() / 50 + 1;
+                            if (myrect[i - 1][j - 1].isFacilityExist &&
+                                myrect[i - 1][j - 1].getFacility()->getName() == "bin")
+                            {
+                                mine_pix->setPos(mine_pix->pos().x() - 2 * cut_speed, mine_pix->pos().y());
+                                i = mine_pix->pos().x() / 50 + 1;
+                            }
+
                         }
                     }
                 }

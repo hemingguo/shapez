@@ -8,6 +8,7 @@
 #include<iostream>
 #include<QDebug>
 #include <QTimer>
+#include "../Game/Game.h"
 #include"../MyRect/MyRect.h"
 #include"../Facility/Facility.h"
 #include"../Mine/Mine.h"
@@ -17,9 +18,10 @@ class Good : public QObject
 {
 Q_OBJECT
 public:
-    float miner_speed;
+
     float belt_speed;
     float cut_speed;
+
     DeliveryCenter *center;
     int oi;
     int oj;

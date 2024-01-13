@@ -21,7 +21,9 @@ public:
     static float miner_speed;
     static float belt_speed;
     static float cut_speed;
-
+    static bool DC_update;
+    static bool Mine_update;
+    static bool again;
     DeliveryCenter *center;
 
     explicit Game(DeliveryCenter *x = nullptr, QGraphicsScene *s = nullptr);

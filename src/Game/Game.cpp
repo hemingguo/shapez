@@ -7,7 +7,10 @@
 
 float Game::miner_speed = 2;
 float Game::belt_speed = 1;
-float Game::cut_speed = 2;
+float Game::cut_speed = 0.5;
+bool Game::DC_update = false;
+bool Game::Mine_update = false;
+bool Game::again = false;
 
 Game::Game(DeliveryCenter *x, QGraphicsScene *s) : center(x), scene(s)
 {

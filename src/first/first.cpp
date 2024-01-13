@@ -13,13 +13,16 @@
 #include <QLabel>
 #include <QTimer>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QDir>
+
 
 #include "first.h"
 #include "ui_first.h"
 
 
 first::first(QWidget *parent) :
-        QWidget(parent), ui(new Ui::first), pixmapItem(nullptr), press(false), direction(0)
+        QWidget(parent), ui(new Ui::first), pixmapItem(nullptr), press(false), direction(0), cur_n(1)
 {
     ui->setupUi(this);
     setMouseTracking(true); // 确保启用鼠标追踪
@@ -59,6 +62,8 @@ first::first(QWidget *parent) :
 
     game = new Game(center, scene);  //初始化游戏逻辑
 
+
+
     //初始化地图---/
 
     //初始化空白方格---/
@@ -80,40 +85,149 @@ first::first(QWidget *parent) :
     }
     //---初始化空白方格/
 
-    //初始化空白方格数组(包括矿物填充和交付中心)
-
-    for (int i = 0; i < 30; ++i)
-    {
-        for (int j = 0; j < 30; ++j)
+    //初始化空白方格数组(矿物填充)
+    if (Game::Mine_update)
+    {  //初始化矿物
+        //铜(圆形,可切割)
+        for (int i = 4; i < 8; i++)
         {
-            myrect[i][j].setPosition(i * 50, j * 50);
+            for (int j = 4; j < 8; j++)
+            {
+                pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
+                pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
+                pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
 
 
-            if (i >= 22 && i <= 25 && j >= 22 && j <= 25)
-            {
-                myrect[i][j].isMineExist = true;
-                myrect[i][j].setMine("iron");
+                scene->addItem(pixmapItem);// 添加方格到场景
+                myrect[i][j].pixmapMineItem = pixmapItem;
+                pixmapItem = nullptr;
 
-            } else if (i >= 4 && i <= 7 && j >= 4 && j <= 7)
-            {
-                myrect[i][j].isMineExist = true;
-                myrect[i][j].setMine("copper");
-            } else if (i >= 13 && i <= 16 && j >= 13 && j <= 16)
-            {
-                myrect[i][j].isFacilityExist = true;
-                myrect[i][j].isDelivery = true;
             }
         }
+        //铁(方形,不可切割)
+        for (int i = 22; i < 26; i++)
+        {
+            for (int j = 22; j < 26; j++)
+            {
+                pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
+                pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
+                pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+                scene->addItem(pixmapItem);// 添加方格到场景
+                myrect[i][j].pixmapMineItem = pixmapItem;
+                pixmapItem = nullptr;
+            }
+        }
+        for (int i = 0; i < 30; ++i)
+        {
+            for (int j = 0; j < 30; ++j)
+            {
+                myrect[i][j].setPosition(i * 50, j * 50);
 
+
+                if (i >= 22 && i <= 25 && j >= 22 && j <= 25)
+                {
+                    myrect[i][j].isMineExist = true;
+                    myrect[i][j].setMine("iron");
+
+                } else if (i >= 4 && i <= 7 && j >= 4 && j <= 7)
+                {
+                    myrect[i][j].isMineExist = true;
+                    myrect[i][j].setMine("copper");
+                }
+            }
+
+        }
+    } else
+    {  //初始化矿物
+        //铜(圆形,可切割)
+        for (int i = 4; i < 6; i++)
+        {
+            for (int j = 4; j < 6; j++)
+            {
+                pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
+                pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
+                pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+
+
+                scene->addItem(pixmapItem);// 添加方格到场景
+                myrect[i][j].pixmapMineItem = pixmapItem;
+                pixmapItem = nullptr;
+
+            }
+        }
+        //铁(方形,不可切割)
+        for (int i = 22; i < 24; i++)
+        {
+            for (int j = 22; j < 24; j++)
+            {
+                pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
+                pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
+                pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
+                scene->addItem(pixmapItem);// 添加方格到场景
+                myrect[i][j].pixmapMineItem = pixmapItem;
+                pixmapItem = nullptr;
+            }
+        }
+        for (int i = 0; i < 30; ++i)
+        {
+            for (int j = 0; j < 30; ++j)
+            {
+                myrect[i][j].setPosition(i * 50, j * 50);
+
+
+                if (i >= 22 && i <= 23 && j >= 22 && j <= 23)
+                {
+                    myrect[i][j].isMineExist = true;
+                    myrect[i][j].setMine("iron");
+
+                } else if (i >= 4 && i <= 5 && j >= 4 && j <= 5)
+                {
+                    myrect[i][j].isMineExist = true;
+                    myrect[i][j].setMine("copper");
+                }
+            }
+
+        }
     }
-
     //初始化交付中心（图形部分）------
-    pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
-    pixmapItem->setPixmap(pixmapItem->pixmap().scaled(200, 200)); // 将方格缩放
-    pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
+    if (!Game::DC_update)
+    {
+        pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));//新建方格
+        pixmapItem->setPixmap(pixmapItem->pixmap().scaled(200, 200)); // 将方格缩放
+        pixmapItem->setPos(13 * cellSize, 13 * cellSize);//按序放置方格
 
-    center->deliveryCenter = pixmapItem;
-    scene->addItem(center->deliveryCenter);// 添加交付中心到场景
+        center->deliveryCenter = pixmapItem;
+        scene->addItem(center->deliveryCenter);
+        for (int i = 13; i <= 16; ++i)
+        {
+            for (int j = 13; j <= 16; ++j)
+            {
+
+                myrect[i][j].isFacilityExist = true;
+                myrect[i][j].isDelivery = true;
+
+            }
+        }
+    } else
+    {
+        pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/center_0.png"));
+        pixmapItem->setPixmap(pixmapItem->pixmap().scaled(250, 250));
+        pixmapItem->setPos(13 * cellSize, 13 * cellSize);
+
+        center->deliveryCenter = pixmapItem;
+        scene->addItem(center->deliveryCenter);
+        for (int i = 13; i <= 17; ++i)
+        {
+            for (int j = 13; j <= 17; ++j)
+            {
+
+                myrect[i][j].isFacilityExist = true;
+                myrect[i][j].isDelivery = true;
+
+            }
+        }
+    }
+    // 添加交付中心到场景
 
     //copper记数部分
     center->copper_p = new QGraphicsPixmapItem(QPixmap("../media/copper_mine.png"));
@@ -164,40 +278,12 @@ first::first(QWidget *parent) :
     scene->addItem(center->half_copper_p_shiwei);
 
 
+
     //------初始化交付中心（图形部分）
 
 
 
-    //初始化矿物
-    //铜(圆形,可切割)
-    for (int i = 4; i < 8; i++)
-    {
-        for (int j = 4; j < 8; j++)
-        {
-            pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/copper.png"));//新建方格
-            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
-            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
 
-
-            scene->addItem(pixmapItem);// 添加方格到场景
-            myrect[i][j].pixmapMineItem = pixmapItem;
-            pixmapItem = nullptr;
-
-        }
-    }
-    //铁(方形,不可切割)
-    for (int i = 22; i < 26; i++)
-    {
-        for (int j = 22; j < 26; j++)
-        {
-            pixmapItem = new QGraphicsPixmapItem(QPixmap("../media/iron.png"));//新建方格
-            pixmapItem->setPixmap(pixmapItem->pixmap().scaled(50, 50)); // 将方格缩放
-            pixmapItem->setPos(i * cellSize, j * cellSize);//按序放置方格
-            scene->addItem(pixmapItem);// 添加方格到场景
-            myrect[i][j].pixmapMineItem = pixmapItem;
-            pixmapItem = nullptr;
-        }
-    }
 
     //---初始化地图/
 
@@ -248,19 +334,78 @@ first::first(QWidget *parent) :
     connect(cutMachineButton, &QPushButton::clicked, this, &first::onCutMachineButtonClick);// 连接按钮的点击信号到槽函数，
     //---创建切割机按钮/
 
+    //显示说明
+    help1 = new QPlainTextEdit(this);
+
+    help1->setPlainText("copper - 圆形矿物，iron - 方形矿物");
+    help1->setStyleSheet(
+            "color: blue; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 8pt;");
+    help1->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    help1->setGeometry(0, 1500, 380, 30);
+
+    help2 = new QPlainTextEdit(this);
+    help2->setPlainText("s-保存退出；升级：m-采矿机，n-传送带，b-切割机;旋转:r,Esc-取消放置,右键删除设备，长按连续放置");
+    help2->setStyleSheet(
+            "color: green; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 8pt;");
+
+    help2->setGeometry(0, 1530, 380, 70);
+
+
+    //显示任务
+    textItem = new QPlainTextEdit(this);
+
+    if (DeliveryCenter::grade_n == 1)
+    {
+        textItem->setPlainText("task 1 : copper —— " + QString::number(20));
+
+        cur_n = 1;
+    } else if (DeliveryCenter::grade_n == 2)
+    {
+        textItem->setPlainText("task 2 : iron —— " + QString::number(30));
+        cur_n = 2;
+    } else if (DeliveryCenter::grade_n == 3)
+    {
+        textItem->setPlainText("task 3 : half_copper —— " + QString::number(50));
+        cur_n = 3;
+    } else
+    {
+        textItem->setPlainText("Wow, You have done all the tasks!");
+        cur_n = 4;
+    }
+    textItem->setStyleSheet(
+            "color: purple; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 10pt;");
+
+
+    textItem->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    textItem->setGeometry(1100, 1530, 400, 50);
+
 
     // 创建定时器，
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &first::updateScene);
     timer->start(20); // 每20毫秒触发一次
 
-
+    pixmapItem = nullptr;
 
 }
 
 first::~first()
 {
     delete ui;
+    disconnect(timer, &QTimer::timeout, this, &first::updateScene);
+    for (int i = 0; i < 30; i++)
+    {
+        for (int j = 0; j < 30; j++)
+        {
+            if (myrect[i][j].isFacilityExist)
+            {
+                delete myrect[i][j].facility;
+                myrect[i][j].isFacilityExist = false;
+                delete myrect[i][j].pixmapFacilityItem;
+                myrect[i][j].pixmapFacilityItem = nullptr;
+            }
+        }
+    }
 }
 
 
@@ -351,6 +496,61 @@ bool first::eventFilter(QObject *obj, QEvent *event)
     if (obj == this && event->type() == QEvent::KeyPress)
     {
         auto keyEvent = dynamic_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_M)
+        {
+            if (DeliveryCenter::up > 0)
+            {
+                Game::miner_speed = 0.5;
+                DeliveryCenter::up--;
+            } else
+            {
+                QMessageBox::information(this, "Information", "升级点数不足噢-v-,完成任务获取点数叭QAQ");
+            }
+        }
+        if (keyEvent->key() == Qt::Key_N)
+        {
+            if (DeliveryCenter::up > 0)
+            {
+                Game::belt_speed = 3;
+                DeliveryCenter::up--;
+            } else
+            {
+                QMessageBox::information(this, "Information", "升级点数不足噢-v-,完成任务获取点数叭QAQ");
+            }
+        }
+        if (keyEvent->key() == Qt::Key_B)
+        {
+            if (DeliveryCenter::up > 0)
+            {
+                Game::cut_speed = 2;
+                DeliveryCenter::up--;
+            } else
+            {
+                QMessageBox::information(this, "Information", "升级点数不足噢-v-,完成任务获取点数叭QAQ");
+            }
+        }
+        if (keyEvent->key() == Qt::Key_S)
+        {
+            delete ui;
+            disconnect(timer, &QTimer::timeout, this, &first::updateScene);
+            for (int i = 0; i < 30; i++)
+            {
+                for (int j = 0; j < 30; j++)
+                {
+                    if (myrect[i][j].isFacilityExist)
+                    {
+                        delete myrect[i][j].facility;
+                        myrect[i][j].isFacilityExist = false;
+                        delete myrect[i][j].pixmapFacilityItem;
+                        myrect[i][j].pixmapFacilityItem = nullptr;
+                    }
+                }
+            }
+            close();
+
+        }
+
+
         if (keyEvent->key() == Qt::Key_Escape)
         {
             if (pixmapItem)
@@ -427,7 +627,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 
                 myrect[i][j].isFacilityExist = false;
 
-                center->around_examine(myrect);
+
             }
 
 
@@ -907,7 +1107,7 @@ bool first::eventFilter(QObject *obj, QEvent *event)
                         previous.clear();
                         direction = 0;
                     }
-                    game->check(myrect);
+
                 }
 
 
@@ -922,6 +1122,39 @@ bool first::eventFilter(QObject *obj, QEvent *event)
 void first::updateScene()
 {
     game->check(myrect);
+
+    if (cur_n != DeliveryCenter::grade_n)
+    {
+        delete textItem;
+        textItem = new QPlainTextEdit(this);
+
+        if (DeliveryCenter::grade_n == 1)
+        {
+            textItem->setPlainText("task 1 : copper —— " + QString::number(20));
+
+            cur_n = 1;
+        } else if (DeliveryCenter::grade_n == 2)
+        {
+            textItem->setPlainText("task 2 : iron —— " + QString::number(30));
+            cur_n = 2;
+        } else if (DeliveryCenter::grade_n == 3)
+        {
+            textItem->setPlainText("task 3 : half_copper —— " + QString::number(50));
+            cur_n = 3;
+        } else
+        {
+            textItem->setPlainText("Wow, You have done all the tasks!");
+            cur_n = 4;
+        }
+        textItem->setStyleSheet(
+                "color: purple; font-style: italic; font-weight: bold;font-family: '../media/方正宋刻本秀楷简.TTF';font-size: 10pt;");
+
+
+        textItem->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        textItem->setGeometry(1100, 1530, 400, 50);
+        textItem->show();
+
+    }
 
     scene->update();
 }

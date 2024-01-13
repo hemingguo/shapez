@@ -13,6 +13,9 @@
 #include <QMouseEvent>
 #include <QGraphicsProxyWidget>
 #include <QDebug>
+#include <QPlainTextEdit>
+#include "../DeliveryCenter/DeliveryCenter.h"
+#include "../Game/Game.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class second; }
@@ -25,7 +28,6 @@ Q_OBJECT
 public:
     explicit second(QWidget *parent = nullptr);
 
-    bool eventFilter(QObject *obj, QEvent *event) override;
 
     ~second() override;
 
@@ -34,14 +36,20 @@ private:
     int happy;
     int windowWidth;
     int windowHeight;
-    QGraphicsView *view;
-    QGraphicsScene *scene;
-    QPushButton *binButton;
-    QGraphicsPixmapItem *pixmapItem;
+    QPlainTextEdit *money;
+    QPushButton *Button1;
+    QPushButton *Button2;
+    QPushButton *Button3;
+
+
     QPoint windowPos;
 private slots:
 
-    void onBinButtonClick();
+    void on1Click();
+
+    void on2Click();
+
+    void on3Click();
 };
 
 
